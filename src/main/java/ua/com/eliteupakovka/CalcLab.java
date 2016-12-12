@@ -135,17 +135,20 @@ public class CalcLab {
     }
     public List<DinamicConstruction> getConstructionList() {
         List<DinamicConstruction> constructionList = new ArrayList<>();
-        try {
-            resSet = connect("SELECT * FROM construction");
-            while(resSet.next())
-            {
-                constructionList.add(new DinamicConstruction(resSet.getString("name"),resSet.getInt("id")));
-
-            }
-            close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            resSet = connect("SELECT * FROM construction");
+//            while(resSet.next())
+//            {
+//                constructionList.add(new DinamicConstruction(resSet.getString("name"),resSet.getInt("id")));
+//
+//            }
+//            close();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+        constructionList.add(new DinamicConstruction("кришка+дно",1));
+        constructionList.add(new DinamicConstruction("книга на магните",2));
+        constructionList.add(new DinamicConstruction("книга на ленте",3));
         return constructionList;
     }
 
