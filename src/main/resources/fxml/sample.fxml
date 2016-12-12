@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="318.0" minWidth="798.0" onKeyPressed="#buttonPressed" prefHeight="751.0" prefWidth="982.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.com.eliteupakovka.Controller">
+   <left>
+      <GridPane maxHeight="311.0" maxWidth="394.0" prefHeight="311.0" prefWidth="394.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="142.0" minWidth="10.0" prefWidth="78.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="212.0" minWidth="10.0" prefWidth="172.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.0" minWidth="43.0" prefWidth="108.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Конструкция" />
+            <Label text="Коробка" GridPane.rowIndex="1" />
+            <Label text="Картон" GridPane.rowIndex="2" />
+            <Label text="Бумага" GridPane.rowIndex="3" />
+            <Label text="Кашировка" GridPane.rowIndex="4" />
+            <Label text="Тиснение" GridPane.rowIndex="5" />
+            <Label text="Ламинация" GridPane.rowIndex="6" />
+            <Label text="Кол-во,шт." GridPane.rowIndex="7" />
+            <Label text="Название" visible="false" GridPane.rowIndex="8" />
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Коробка" GridPane.columnIndex="2">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin></Label>
+            <TextField fx:id="fW" promptText="Ширина" text="31.8" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="fL" promptText="Длинна" text="28.5" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="fH" promptText="Высота(Д)" text="10.5" GridPane.columnIndex="2" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="fHc" promptText="Высота(К)" text="3" GridPane.columnIndex="2" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="fName" text="test" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <TextField fx:id="fQuantity" text="100" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label prefHeight="21.0" prefWidth="56.0" text="клише" GridPane.columnIndex="2" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="sC1" promptText="Ширина" GridPane.columnIndex="2" GridPane.rowIndex="6">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="sC2" promptText="Высота" GridPane.columnIndex="2" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField visible="false" GridPane.columnIndex="2" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </TextField>
+            <ComboBox fx:id="cbConstruction" prefWidth="190.0" GridPane.columnIndex="1" />
+            <ComboBox fx:id="cbBox" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="cbCarton" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="cbPaper" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="cbKashirovka" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ComboBox fx:id="cbTisnenie" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <ComboBox fx:id="cbLamination" prefHeight="31.0" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" onAction="#OnCalc" prefHeight="25.0" prefWidth="170.0" text="Просчет" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Button mnemonicParsing="false" onAction="#CalcPressKnife" text="штампы" GridPane.columnIndex="2" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin></Button>
+            <Button mnemonicParsing="false" onAction="#CalcCliche" text="клише" GridPane.rowIndex="9" />
+         </children>
+         <BorderPane.margin>
+            <Insets left="10.0" />
+         </BorderPane.margin>
+      </GridPane>
+   </left>
+   <center>
+      <VBox prefHeight="325.0" prefWidth="463.0" BorderPane.alignment="CENTER">
+         <children>
+            <ListView fx:id="resultsListView">
+               <VBox.margin>
+                  <Insets right="10.0" />
+               </VBox.margin></ListView>
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <TabPane prefHeight="332.0" prefWidth="834.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Информация">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="156.0" prefWidth="798.0">
+                     <children>
+                        <HBox layoutX="30.0" layoutY="5.0">
+                           <children>
+                              <VBox layoutX="4.0" layoutY="14.0" prefHeight="200.0" prefWidth="168.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="5.0">
+                                 <children>
+                                    <Label fx:id="prise" text="Label" />
+                                    <Label fx:id="cost" text="Label" />
+                                 </children>
+                              </VBox>
+                              <VBox prefHeight="200.0" prefWidth="143.0">
+                                 <children>
+                                    <Label fx:id="cartonCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="paperCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="tapeCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="glueCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="workCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="cuttingCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="pressinCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="rentCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="stretchCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="extraCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="laminationCost" text="Label">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Картон">
+               <content>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane prefHeight="209.0" prefWidth="372.0">
+                           <children>
+                              <ListView fx:id="cartonListView" prefHeight="199.0" prefWidth="184.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                     </children>
+                  </HBox>
+               </content>
+          </Tab>
+            <Tab text="Бумага">
+               <content>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane prefHeight="209.0" prefWidth="372.0">
+                           <children>
+                              <ListView fx:id="paperListView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                     </children>
+                  </HBox>
+               </content>
+            </Tab>
+            <Tab text="Допуска">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="257.0" prefWidth="834.0">
+                     <children>
+                        <ListView fx:id="testDb" layoutX="521.0" layoutY="30.0" prefHeight="167.0" prefWidth="174.0" />
+                        <VBox layoutX="14.0" layoutY="12.0" prefHeight="233.0" prefWidth="282.0">
+                           <children>
+                              <HBox prefHeight="30.0" prefWidth="136.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="242.0" text="Допуск по ширине.мм(Дно-картон)" />
+                                    <TextField fx:id="toleranceOfwidthCartonBottom" prefHeight="25.0" prefWidth="127.0" text="0.5" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="30.0" prefWidth="136.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="253.0" text="Допуск по длинне.мм(Дно-картон)" />
+                                    <TextField fx:id="toleranceOflengthCartonBottom" prefHeight="25.0" prefWidth="135.0" text="0.5" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="30.0" prefWidth="136.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="254.0" text="Допуск по длинне.мм(Крыш-картон)" />
+                                    <TextField fx:id="toleranceOflengthCartonTop" prefHeight="25.0" prefWidth="135.0" text="0.5" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="30.0" prefWidth="136.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="249.0" text="Допуск по ширине.мм(Крыш-картон)" />
+                                    <TextField fx:id="toleranceOfwidthCartonTop" prefHeight="25.0" prefWidth="127.0" text="0.5" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="30.0" prefWidth="136.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="249.0" text="Допуск по ширине.мм(Крыш-бумага)" />
+                                    <TextField fx:id="toleranceOfwidthPaperBottom" prefHeight="25.0" prefWidth="127.0" text="0.5" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="30.0" prefWidth="136.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="254.0" text="Допуск по длинне.мм(Крыш-бумага)" />
+                                    <TextField fx:id="toleranceOflengthPapeBottomr" prefHeight="25.0" prefWidth="135.0" text="0.5" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="30.0" prefWidth="136.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="253.0" text="Допуск по длинне.мм(Дно-бумага)" />
+                                    <TextField fx:id="toleranceOflengthPaperTop" prefHeight="25.0" prefWidth="135.0" text="0.5" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="30.0" prefWidth="136.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="242.0" text="Допуск по ширине.мм(Дно-бумага)" />
+                                    <TextField fx:id="toleranceOfwidthPaperTop" prefHeight="25.0" prefWidth="127.0" text="0.5" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <CheckBox fx:id="isToleranceAll" mnemonicParsing="false" prefHeight="17.0" prefWidth="207.0" selected="true" text="все" />
+                                    <TextField fx:id="toleranceAll" prefHeight="25.0" prefWidth="190.0" text="1.5" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="100.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+        </tabs>
+         <BorderPane.margin>
+            <Insets top="10.0" />
+         </BorderPane.margin>
+      </TabPane>
+   </bottom>
+</BorderPane>
