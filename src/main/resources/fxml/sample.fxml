@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="318.0" minWidth="798.0" onKeyPressed="#buttonPressed" prefHeight="751.0" prefWidth="982.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.com.eliteupakovka.Controller">
    <left>
       <GridPane maxHeight="311.0" maxWidth="394.0" prefHeight="311.0" prefWidth="394.0" BorderPane.alignment="CENTER">
@@ -26,7 +28,7 @@
         </rowConstraints>
          <children>
             <Label text="Конструкция" />
-            <Label text="Коробка" GridPane.rowIndex="1" />
+            <Label text="Размер" GridPane.rowIndex="1" />
             <Label text="Картон" GridPane.rowIndex="2" />
             <Label text="Бумага" GridPane.rowIndex="3" />
             <Label text="Кашировка" GridPane.rowIndex="4" />
@@ -34,7 +36,7 @@
             <Label text="Ламинация" GridPane.rowIndex="6" />
             <Label text="Кол-во,шт." GridPane.rowIndex="7" />
             <Label text="Название" visible="false" GridPane.rowIndex="8" />
-            <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Коробка" GridPane.columnIndex="2">
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="78.0" text="Размер" GridPane.columnIndex="2">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin></Label>
@@ -106,6 +108,7 @@
                <VBox.margin>
                   <Insets right="10.0" />
                </VBox.margin></ListView>
+            <Button mnemonicParsing="false" onAction="#OnAdd" text="+Добавить" />
          </children>
       </VBox>
    </center>
@@ -194,7 +197,7 @@
                      <children>
                         <AnchorPane prefHeight="209.0" prefWidth="372.0">
                            <children>
-                              <ListView fx:id="cartonListView" prefHeight="199.0" prefWidth="184.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                              <ListView fx:id="cartonListView" prefHeight="283.0" prefWidth="964.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="-602.0" AnchorPane.topAnchor="5.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" />

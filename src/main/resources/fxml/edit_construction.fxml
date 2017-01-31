@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="694.0" prefWidth="1038.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.com.eliteupakovka.ECController">
+   <children>
+      <BorderPane layoutX="170.0" layoutY="139.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <left>
+            <VBox prefHeight="694.0" prefWidth="590.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox prefHeight="70.0" prefWidth="200.0">
+                     <children>
+                        <ComboBox fx:id="cbConstruction" prefHeight="31.0" prefWidth="218.0">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                        <TextField fx:id="tfConstruction" promptText="Конструкция">
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <Button mnemonicParsing="false" text="Добавить">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="50.0" prefWidth="200.0">
+                     <children>
+                        <TextField fx:id="tfPartName" promptText="Название детали">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin></TextField>
+                        <ComboBox fx:id="cbMaterialType" prefHeight="31.0" prefWidth="136.0">
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                        <ComboBox fx:id="cbMaterial" prefHeight="31.0" prefWidth="220.0">
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                     </children>
+                  </HBox>
+                  <GridPane>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="193.0" minWidth="10.0" prefWidth="167.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="10.0" prefWidth="97.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Множитель" GridPane.columnIndex="1" />
+                        <Label text="ширины" GridPane.rowIndex="1" />
+                        <Label text="длинны" GridPane.rowIndex="2" />
+                        <Label text="высоты(низа x2)" GridPane.rowIndex="3" />
+                        <Label text="высоты(верха x2)" GridPane.rowIndex="4" />
+                        <Label text="Прибавка" GridPane.columnIndex="2" />
+                        <Label text="высоты по ширине(низа)" GridPane.rowIndex="5" />
+                        <Label text="высоты по длинне(низа)" GridPane.rowIndex="6" />
+                        <Label text="высота по ширине(верха)" GridPane.rowIndex="7" />
+                        <Label text="высоты по длинне(верха)" GridPane.rowIndex="8" />
+                        <TextField fx:id="tfWM" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="tfLM" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="tfHTM" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <TextField fx:id="tfHBM" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="tfWHBM" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <TextField fx:id="tfHLBM" text="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <TextField fx:id="tfHWTM" text="0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <TextField fx:id="tfHLTM" text="0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <TextField fx:id="tfWA" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TextField fx:id="tfLA" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField fx:id="tfHBA" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <TextField fx:id="tfHTA" text="0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <TextField fx:id="tfTolerance" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label text="Допуск" GridPane.columnIndex="3" />
+                        <Label text="Обычная" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Label text="Дизайнерская" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+                        <Label text="цена работы" GridPane.rowIndex="10" />
+                        <TextField fx:id="tfWS" text="0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <TextField fx:id="tfWD" text="0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+                     </children>
+                  </GridPane>
+                  <HBox prefHeight="50.0" prefWidth="200.0">
+                     <children>
+                        <CheckBox fx:id="chbPressing" mnemonicParsing="false" text="Высечка">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin></CheckBox>
+                        <CheckBox fx:id="chbLaminable" mnemonicParsing="false" text="Ламинация">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin></CheckBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#bindPart" text="Добавить/изменить деталь">
+                           <HBox.margin>
+                              <Insets left="40.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#deletePart" text="Удалить деталь">
+                           <HBox.margin>
+                              <Insets left="40.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </left>
+         <center>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ListView fx:id="lvConstructionPart" prefHeight="446.0" prefWidth="510.0" />
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

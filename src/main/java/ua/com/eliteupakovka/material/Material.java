@@ -3,12 +3,14 @@ package ua.com.eliteupakovka.material;
 
 public class Material {
     String name;
+    private int id;
     private double width;
     private double length;
     private double cost;
     private boolean enable;
 
-    public Material(String name, double width, double length, double cost) {
+    public Material(int id, String name, double width, double length, double cost) {
+        this.id = id;
         this.name = name;
         this.width = width;
         this.length = length;

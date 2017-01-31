@@ -2,68 +2,99 @@ package ua.com.eliteupakovka;
 
 
 public class Parameters {
-    double toleranceOfwidthCartonBottom;
-    double toleranceOflengthCartonBottom;
-    double toleranceOfwidthCartonTop;
-    double toleranceOflengthCartonTop;
-    double toleranceOfwidthPaperBottom;
-    double toleranceOflengthPapeBottomr;
-    double toleranceOfwidthPaperTop;
-    double toleranceOflengthPaperTop;
 
+    private double tolerance;
+    private double widthMulti;
+    private double widthAdd;
+    private double lengthMulti;
+    private double lengthAdd;
+    private double heightBottomMulti;
+    private double heightBottomAdd;
+    private double heightTopMulti;
+    private double heightTopAdd;
+    private double heightBottomMultiByWidth;
+    private double heightBottomMultiByLength;
+    private double heightTopMultiByWidth;
+    private double heightTopMultiByLength;
 
-    public Parameters(double toleranceOfwidthCartonBottom, double toleranceOflengthCartonBottom, double toleranceOfwidthCartonTop, double toleranceOflengthCartonTop, double toleranceOfwidthPaperBottom, double toleranceOflengthPapeBottomr, double toleranceOfwidthPaperTop, double toleranceOflengthPaperTop) {
-        this.toleranceOfwidthCartonBottom = toleranceOfwidthCartonBottom;
-        this.toleranceOflengthCartonBottom = toleranceOflengthCartonBottom;
-        this.toleranceOfwidthCartonTop = toleranceOfwidthCartonTop;
-        this.toleranceOflengthCartonTop = toleranceOflengthCartonTop;
-        this.toleranceOfwidthPaperBottom = toleranceOfwidthPaperBottom;
-        this.toleranceOflengthPapeBottomr = toleranceOflengthPapeBottomr;
-        this.toleranceOfwidthPaperTop = toleranceOfwidthPaperTop;
-        this.toleranceOflengthPaperTop = toleranceOflengthPaperTop;
-    }
-    public Parameters(double toleranceAll) {
-        this.toleranceOfwidthCartonBottom = toleranceAll;
-        this.toleranceOflengthCartonBottom = toleranceAll;
-        this.toleranceOfwidthCartonTop = toleranceAll;
-        this.toleranceOflengthCartonTop = toleranceAll;
-        this.toleranceOfwidthPaperBottom = toleranceAll;
-        this.toleranceOflengthPapeBottomr = toleranceAll;
-        this.toleranceOfwidthPaperTop = toleranceAll;
-        this.toleranceOflengthPaperTop = toleranceAll;
+    public Parameters(double tolerance, double widthMulti, double widthAdd, double lengthMulti, double lengthAdd, double heightBottomMulti, double heightBottomAdd, double heightTopMulti, double heightTopAdd) {
+        this.tolerance = tolerance;
+        this.widthMulti = widthMulti;
+        this.widthAdd = widthAdd;
+        this.lengthMulti = lengthMulti;
+        this.lengthAdd = lengthAdd;
+        this.heightBottomMulti = heightBottomMulti;
+        this.heightBottomAdd = heightBottomAdd;
+        this.heightTopMulti = heightTopMulti;
+        this.heightTopAdd = heightTopAdd;
     }
 
-
-    public double getToleranceOfwidthCartonBottom() {
-        return toleranceOfwidthCartonBottom;
+    public Parameters(double tolerance, double widthMulti, double widthAdd, double lengthMulti, double lengthAdd, double heightBottomMulti, double heightBottomAdd, double heightTopMulti, double heightTopAdd, double heightBottomMultiByWidth, double heightBottomMultiByLength, double heightTopMultiByWidth, double heightTopMultiByLength) {
+        this.tolerance = tolerance;
+        this.widthMulti = widthMulti;
+        this.widthAdd = widthAdd;
+        this.lengthMulti = lengthMulti;
+        this.lengthAdd = lengthAdd;
+        this.heightBottomMulti = heightBottomMulti;
+        this.heightBottomAdd = heightBottomAdd;
+        this.heightTopMulti = heightTopMulti;
+        this.heightTopAdd = heightTopAdd;
+        this.heightBottomMultiByWidth = heightBottomMultiByWidth;
+        this.heightBottomMultiByLength = heightBottomMultiByLength;
+        this.heightTopMultiByWidth = heightTopMultiByWidth;
+        this.heightTopMultiByLength = heightTopMultiByLength;
     }
 
-    public double getToleranceOflengthCartonBottom() {
-        return toleranceOflengthCartonBottom;
+    public double getTolerance() {
+        return tolerance;
     }
 
-    public double getToleranceOfwidthCartonTop() {
-        return toleranceOfwidthCartonTop;
+    public double getWidthMulti() {
+        return widthMulti;
     }
 
-    public double getToleranceOflengthCartonTop() {
-        return toleranceOflengthCartonTop;
+    public double getWidthAdd() {
+        return widthAdd;
     }
 
-    public double getToleranceOfwidthPaperBottom() {
-        return toleranceOfwidthPaperBottom;
+    public double getLengthMulti() {
+        return lengthMulti;
     }
 
-    public double getToleranceOflengthPapeBottomr() {
-        return toleranceOflengthPapeBottomr;
+    public double getLengthAdd() {
+        return lengthAdd;
     }
 
-    public double getToleranceOfwidthPaperTop() {
-        return toleranceOfwidthPaperTop;
+    public double getHeightBottomMulti() {
+        return heightBottomMulti;
     }
 
-    public double getToleranceOflengthPaperTop() {
-        return toleranceOflengthPaperTop;
+    public double getHeightBottomAdd() {
+        return heightBottomAdd;
+    }
+
+    public double getHeightTopMulti() {
+        return heightTopMulti;
+    }
+
+    public double getHeightTopAdd() {
+        return heightTopAdd;
+    }
+
+    public double getHeightBottomMultiByWidth() {
+        return heightBottomMultiByWidth;
+    }
+
+    public double getHeightBottomMultiByLength() {
+        return heightBottomMultiByLength;
+    }
+
+    public double getHeightTopMultiByWidth() {
+        return heightTopMultiByWidth;
+    }
+
+    public double getHeightTopMultiByLength() {
+        return heightTopMultiByLength;
     }
 }
 

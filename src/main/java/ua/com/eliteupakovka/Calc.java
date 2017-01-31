@@ -1,6 +1,9 @@
 package ua.com.eliteupakovka;
 
 
+import ua.com.eliteupakovka.conctruction.DynamicConstruction;
+import ua.com.eliteupakovka.conctruction.Sizes;
+import ua.com.eliteupakovka.conctruction.WorkCost;
 import ua.com.eliteupakovka.material.Carton;
 import ua.com.eliteupakovka.material.Material;
 import ua.com.eliteupakovka.material.Paper;
@@ -10,42 +13,25 @@ import java.util.List;
 
 
 public class Calc {
-    double width, length, heightTop, heightBottom;
     int quantity;
-    String name, carton, paper, construction, kashirovka, tistenie, lamination;
-    List<Carton> cartonList;
-    List<Paper> paperList;
-    List<Kashirovka> kashirovkaList;
-    List<Carton> cartonSelectList;
-    List<Paper> paperSelectList;
-    List<Kashirovka> kashirovkaSelectList;
+    String name, paper, tistenie, lamination;
+    DynamicConstruction construction;
 
-    Construction constructionNew;
+
     Costs costs;
 
 
-    public Calc(List<Kashirovka> kashirovkaList, String name, int quantity, String carton, String paper, String construction, String kashirovka, String tistenie, String lamination, double width, double length, double heightTop, double heightBottom, List<Carton> cartonList, List<Paper> paperList,Parameters parameters) {
-        this.kashirovkaList = kashirovkaList;
+    public Calc(String name, int quantity, DynamicConstruction construction, String tistenie, String lamination, Sizes sizeBox,int cartonId,int paperId,int kashirovkaId, Parameters parameters) {
         this.name = name;
         this.quantity = quantity;
-        this.carton = carton;
-        this.paper = paper;
         this.construction = construction;
-        this.kashirovka = kashirovka;
         this.tistenie = tistenie;
         this.lamination = lamination;
-        this.width = width;
-        this.length = length;
-        this.heightTop = heightTop;
-        this.heightBottom = heightBottom;
-        this.cartonList = cartonList;
-        this.paperList = paperList;
 
-        cartonSelectList = getListOfSelectItem(carton,cartonList);
-        paperSelectList = getListOfSelectItem(paper, paperList);
-        kashirovkaSelectList = getListOfSelectItem(kashirovka,kashirovkaList);
         costs = new Costs(1, 1.8, 0.16, 1, 50, 0.25, 0.1, 200, 0.24);
-        constructionNew = new Construction(construction,width, length, heightBottom, heightTop,cartonSelectList,paperSelectList,kashirovkaSelectList,quantity,parameters);
+        CalcLab calcLab = CalcLab.get();
+        this.construction = new DynamicConstruction(calcLab.getConstructionPartListByConstructionId(construction.getId(),sizeBox,parameters,quantity),construction.getWorkCost(),construction.getName(),construction.getId(),sizeBox,cartonId,paperId,kashirovkaId,quantity);
+
     }
 
 

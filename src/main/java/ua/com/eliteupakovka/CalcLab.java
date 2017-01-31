@@ -1,10 +1,9 @@
 package ua.com.eliteupakovka;
 
 
-import ua.com.eliteupakovka.conctruction.DinamicConstruction;
-import ua.com.eliteupakovka.conctruction.Sizes;
-import ua.com.eliteupakovka.material.Carton;
+import ua.com.eliteupakovka.conctruction.*;
 import ua.com.eliteupakovka.material.Material;
+import ua.com.eliteupakovka.material.MaterialType;
 import ua.com.eliteupakovka.material.Paper;
 
 import java.sql.*;
@@ -14,10 +13,6 @@ import java.util.List;
 
 public class CalcLab {
     private static CalcLab calcLab;
-    private List<Carton> cartonList;
-    private List<Paper> paperList;
-    private List<Kashirovka> kashirovkaList;
-    private List<Sizes> sizesList;
 
     private Connection connection;
     private Statement statmt;
@@ -31,101 +26,29 @@ public class CalcLab {
     }
 
     private CalcLab() {
-        paperList = new ArrayList<>();
-        Paper paper = new Paper("меловка", 64 , 90 , 3, false);
-        Paper paper1 = new Paper("меловка", 70 , 100 , 3.5, false);
-        Paper paper2 = new Paper("печать на меловке", 45 , 64 , 3.5, false);
-        Paper paper3 = new Paper("печать на меловке", 50 , 70 , 4, false);
-        Paper paper4 = new Paper("печать на меловке", 63 , 90 , 7, false);
-        Paper paper5 = new Paper("печать на меловке", 69 , 100 , 7.5, false);
-        Paper paper6 = new Paper("imitlin", 72 , 102 , 22, true);
-        Paper paper7 = new Paper("stardream", 70 , 100 , 32, true);
-        Paper paper8 = new Paper("stardream", 72 , 102 , 32, true);
-        Paper paper9 = new Paper("malmero", 70 , 100 , 16, true);
-        paperList.add(paper);
-        paperList.add(paper1);
-        paperList.add(paper2);
-        paperList.add(paper3);
-        paperList.add(paper4);
-        paperList.add(paper5);
-        paperList.add(paper6);
-        paperList.add(paper7);
-        paperList.add(paper8);
-        paperList.add(paper9);
-
-        kashirovkaList = new ArrayList<>();
-        Kashirovka kashirovkaNon = new Kashirovka("нет",0,0,0);
-        Kashirovka kashirovka1 = new Kashirovka("офсет",64,90,2.5);
-        Kashirovka kashirovka11 = new Kashirovka("офсет",70,100,3);
-        Kashirovka kashirovka2 = new Kashirovka("печать на офсете",64,90,7);
-        Kashirovka kashirovka22 = new Kashirovka("печать на офсете",70,100,7.5);
-        kashirovkaList.add(kashirovka1);
-        kashirovkaList.add(kashirovka11);
-        kashirovkaList.add(kashirovka2);
-        kashirovkaList.add(kashirovka22);
-
-        kashirovkaList.add(kashirovkaNon);
-        for (Paper p:paperList){
-            if (p.getKash() != null){
-                kashirovkaList.add(p.getKash());
-            }
-        }
-
-        cartonList = new ArrayList<>();
-        Carton carton = new Carton("стандартный", 80, 100, 12, 1.5);
-        Carton carton1 = new Carton("стандартный", 90, 100, 13.5, 1.5);
-        Carton carton2 = new Carton("стандартный", 70, 100, 20, 2);
-        Carton carton3 = new Carton("голандский", 79, 100, 23, 1.5);
-        Carton carton4 = new Carton("голандский", 70, 100, 33, 2);
-        Carton carton5 = new Carton("голандский", 79 ,100, 35, 2);
-        Carton carton6 = new Carton("голандский", 70, 100, 13.5, 1);
-        Carton carton7 = new Carton("голандский", 70, 100, 30, 3);
-        cartonList.add(carton);
-        cartonList.add(carton1);
-        cartonList.add(carton2);
-        cartonList.add(carton3);
-        cartonList.add(carton4);
-        cartonList.add(carton5);
-        cartonList.add(carton6);
-        cartonList.add(carton7);
-
-        sizesList = new ArrayList<>();
-        sizesList.add(new Sizes(0,0,0,0));
-        sizesList.add(new Sizes(30,20,7,3));
-        sizesList.add(new Sizes(25,25,8,3));
-
-
-
-    }
-
-    public List<Paper> getPaperList() {
-        return paperList;
-    }
-
-    public List<Kashirovka> getKashirovkaList() {
-        return kashirovkaList;
-    }
-
-    public List<Carton> getCartonList() {
-        return cartonList;
-    }
-
-    public List<Sizes> getSizesList() {
-        return sizesList;
-    }
-
-    public <T extends Material> List<T> getMaterialListByTypeId(int idType) {
-        List<T> materialList = new ArrayList<>();
-
         try {
-            resSet = connect("SELECT * FROM materialSize WHERE id=" + idType);
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:BoxCalc.sqlite");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public List<MaterialType> getMaterialTypeList(String type){
+        List<MaterialType> materialList = new ArrayList<>();
+        if (type.equals("кашировка")){
+            type = "бумага";
+        }else if (type.equals("другое")){
+            type = "пластик' OR type='магнит' OR type='лента' OR type='люверс' OR type='шнур";
+        }
+        try {
+            resSet = connect("SELECT * FROM materialType WHERE type='" + type + "'");
             while(resSet.next())
             {
-                int id = resSet.getInt("id");
-                double width = resSet.getDouble("width");
-                double length = resSet.getDouble("length");
-                double cost = resSet.getDouble("cost");
-                materialList.add((T) new Material(String.valueOf(idType),width,length,cost));
+                materialList.add(new MaterialType(resSet.getInt("id"),resSet.getString("name"),resSet.getDouble("thicness")));
             }
             close();
         } catch (SQLException e) {
@@ -133,44 +56,264 @@ public class CalcLab {
         }
         return materialList;
     }
-    public List<DinamicConstruction> getConstructionList() {
-        List<DinamicConstruction> constructionList = new ArrayList<>();
-//        try {
-//            resSet = connect("SELECT * FROM construction");
-//            while(resSet.next())
-//            {
-//                constructionList.add(new DinamicConstruction(resSet.getString("name"),resSet.getInt("id")));
-//
-//            }
-//            close();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-        constructionList.add(new DinamicConstruction("кришка+дно",1));
-        constructionList.add(new DinamicConstruction("книга на магните",2));
-        constructionList.add(new DinamicConstruction("книга на ленте",3));
+
+
+
+    public List<Sizes> getSizesList() {
+        List<Sizes> sizesList = new ArrayList<>();
+        try {
+            resSet = connect("SELECT * FROM sizes");
+            sizesList.add(new Sizes(0,0,0,0,0));
+            while(resSet.next())
+            {
+              sizesList.add(new Sizes(resSet.getInt("id"),resSet.getDouble("width"),resSet.getDouble("length"),resSet.getDouble("heightBottom"),resSet.getDouble("heightTop")));
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sizesList;
+    }
+
+    public <T extends Material> List<T> getMaterialListByTypeId(int idType) {
+        List<T> materialList = new ArrayList<>();
+
+        try {
+            resSet = connect("SELECT * FROM materialSize WHERE idType=" + idType);
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM materialType WHERE id=" + idType);
+            String name = resultSet.getString("name");
+            while(resSet.next())
+            {
+                int id = resSet.getInt("id");
+                double width = resSet.getDouble("width");
+                double length = resSet.getDouble("length");
+                double cost = resSet.getDouble("cost");
+                materialList.add((T) new Material(id,name,width,length,cost));
+            }
+            resultSet.close();
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return materialList;
+    }
+    public List<DynamicConstruction> getConstructionList() {
+        List<DynamicConstruction> constructionList = new ArrayList<>();
+        try {
+            resSet = connect("SELECT * FROM construction");
+            while(resSet.next())
+            {
+                constructionList.add(new DynamicConstruction(resSet.getString("name"),resSet.getInt("id"),new WorkCost(resSet.getDouble("workcosts"),resSet.getDouble("workcostd"))));
+
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+//        constructionList.add(new DynamicConstruction("кришка+дно",1));
+//        constructionList.add(new DynamicConstruction("книга на магните",2));
+//        constructionList.add(new DynamicConstruction("книга на ленте",3));
         return constructionList;
+    }
+    public List<ConstructionPart> getConstructionPartListByConstructionId(int id,Sizes sizeBox,Parameters parameters,int quantity){
+        List<ConstructionPart> constructionParts = new ArrayList<>();
+        try {
+            ResultSet  resultSizeFor = connection.createStatement().executeQuery("SELECT * FROM sizeFor WHERE idConstruction=" + id + " AND idSize=" + sizeBox.getId()) ;
+            List<ConstructionSize> constructionSizes = new ArrayList<>();
+            while (resultSizeFor.next()){
+                constructionSizes.add(new ConstructionSize(resultSizeFor.getInt("id"),
+                        resultSizeFor.getInt("idSize"),
+                        resultSizeFor.getInt("idConstruction"),
+                        resultSizeFor.getInt("idConstructionPart"),
+                        resultSizeFor.getDouble("ws"),
+                        resultSizeFor.getDouble("wd")));
+            }
+            resSet = connect("SELECT * FROM constructionPart WHERE idConstruction=" + id);
+
+            while(resSet.next())
+            {
+                WorkCost workCost = new WorkCost(resSet.getDouble("ws"),resSet.getDouble("wd"));
+                for (ConstructionSize cs: constructionSizes){
+                    if (cs.getIdConstructionPart() == resSet.getInt("id")){
+                        workCost.setSimple(cs.getWs());
+                        workCost.setDesign(cs.getWd());
+                    }
+                }
+                Parameters param = new Parameters(resSet.getDouble("tolerance"),resSet.getDouble("widthMulti"),resSet.getDouble("widthAdd"),resSet.getDouble("lengthMulti"),resSet.getDouble("lengthAdd"),resSet.getDouble("heightBottomMulti"),resSet.getDouble("heightBottomAdd"),resSet.getDouble("heightTopMulti"),resSet.getDouble("heightTopAdd"),resSet.getDouble("heightBottomMultiByWidth"),resSet.getDouble("heightBottomMultiByLength"),resSet.getDouble("heightTopMultiByWidth"),resSet.getDouble("heightTopMultiByLength"));
+                constructionParts.add(new ConstructionPart(resSet.getInt("id"),id,resSet.getInt("material"),resSet.getString("name"),resSet.getString("type"),"delete this field",getSizeForPart(sizeBox,param),quantity,1 == resSet.getInt("pressing"),1 == resSet.getInt("laminable"),workCost,null));
+
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return constructionParts;
+    }
+    public List<ConstructionPart> getConstructionPartListByConstructionId(int id){
+        List<ConstructionPart> constructionParts = new ArrayList<>();
+        try {
+            resSet = connect("SELECT * FROM constructionPart WHERE idConstruction=" + id);
+
+            while(resSet.next())
+            {
+
+                Parameters param = new Parameters(resSet.getDouble("tolerance"),resSet.getDouble("widthMulti"),resSet.getDouble("widthAdd"),resSet.getDouble("lengthMulti"),resSet.getDouble("lengthAdd"),resSet.getDouble("heightBottomMulti"),resSet.getDouble("heightBottomAdd"),resSet.getDouble("heightTopMulti"),resSet.getDouble("heightTopAdd"),resSet.getDouble("heightBottomMultiByWidth"),resSet.getDouble("heightBottomMultiByLength"),resSet.getDouble("heightTopMultiByWidth"),resSet.getDouble("heightTopMultiByLength"));
+                constructionParts.add(new ConstructionPart(resSet.getInt("id"),id,resSet.getInt("material"),resSet.getString("name"),resSet.getString("type"),"dt",null,0,1 == resSet.getInt("pressing"),1 == resSet.getInt("laminable"),new WorkCost(resSet.getDouble("ws"),resSet.getDouble("wd")),param));
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return constructionParts;
+    }
+    private Sizes getSizeForPart(Sizes sizeBox,Parameters parameters){
+        Sizes sizesPart = new Sizes(sizeBox.getWidth() * parameters.getWidthMulti() +
+                        sizeBox.getHeightBottom() * parameters.getHeightBottomMulti() * 2 +
+                        sizeBox.getHeightBottom() * parameters.getHeightBottomMultiByWidth() +
+                        sizeBox.getHeightTop() * parameters.getHeightTopMulti() * 2 +
+                        sizeBox.getHeightTop() * parameters.getHeightTopMultiByWidth() +
+                        parameters.getWidthAdd() +
+                        parameters.getHeightBottomAdd() +
+                        parameters.getHeightTopAdd() +
+                        parameters.getTolerance(),
+                        sizeBox.getLength() * parameters.getLengthMulti() +
+                        sizeBox.getHeightBottom() * parameters.getHeightBottomMulti() * 2 +
+                        sizeBox.getHeightBottom() * parameters.getHeightBottomMultiByLength() +
+                        sizeBox.getHeightTop() * parameters.getHeightTopMulti() * 2 +
+                        sizeBox.getHeightTop() * parameters.getHeightTopMultiByLength() +
+                        parameters.getLengthAdd() +
+                        parameters.getHeightBottomAdd() +
+                        parameters.getHeightTopAdd() +
+                        parameters.getTolerance());
+
+        return sizesPart;
+    }
+
+    public boolean updateConstructionPart(ConstructionPart part){
+        boolean status = false;
+        Parameters parameters = part.getParameters();
+        int a = part.isPressing() ? 1 : 0;
+        int b = part.isLaminable() ? 1 : 0;
+        try {
+            statmt = connection.createStatement();
+            status = statmt.execute("UPDATE constructionPart SET " +
+                    "name='" + part.getName() +
+                    "', type='"+ part.getType() +
+                    "', material="+ part.getMaterialTypeId() +
+                    ", widthMulti="+ parameters.getWidthMulti() +
+                    ", widthAdd="+ parameters.getWidthAdd() +
+                    ", lengthMulti="+ parameters.getLengthMulti() +
+                    ", lengthAdd="+ parameters.getLengthAdd() +
+                    ", heightBottomMulti="+ parameters.getHeightBottomMulti() +
+                    ", heightBottomAdd="+ parameters.getHeightBottomAdd() +
+                    ", heightTopMulti="+ parameters.getHeightTopMulti() +
+                    ", heightTopAdd="+ parameters.getHeightTopAdd() +
+                    ", tolerance="+ parameters.getTolerance() +
+                    ", heightBottomMultiByWidth="+ parameters.getHeightBottomMultiByWidth() +
+                    ", heightBottomMultiByLength="+ parameters.getHeightBottomMultiByLength() +
+                    ", heightTopMultiByWidth="+ parameters.getHeightTopMultiByWidth() +
+                    ", heightTopMultiByLength="+ parameters.getHeightTopMultiByLength() +
+                    ", ws="+ part.getWorkCost().getWorkCost(false) +
+                    ", wd="+ part.getWorkCost().getWorkCost(true) +
+                    ", pressing="+ a +
+                    ", laminable="+ b +
+                    " WHERE id=" + part.getId());
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    public boolean insertConstructionPart(ConstructionPart part){
+        boolean status = false;
+        try {
+            statmt = connection.createStatement();
+            int a = part.isPressing() ? 1 : 0;
+            int b = part.isLaminable() ? 1 : 0;
+            Parameters parameters = part.getParameters();
+            status = statmt.execute("INSERT INTO constructionPart(idConstruction, name, type, material, widthMulti, widthAdd, lengthMulti, lengthAdd, heightBottomMulti, heightBottomAdd, heightTopMulti, heightTopAdd, tolerance, heightBottomMultiByWidth, heightBottomMultiByLength, heightTopMultiByWidth, heightTopMultiByLength, ws, wd, pressing, laminable) " +
+                    "VALUES (" + part.getConstrId() +
+                    ",'"+ part.getName() +
+                    "','"+ part.getType() +
+                    "',"+ part.getMaterialTypeId() +
+                    ","+ parameters.getWidthMulti() +
+                    ","+ parameters.getWidthAdd() +
+                    ","+ parameters.getLengthMulti() +
+                    ","+ parameters.getLengthAdd() +
+                    ","+ parameters.getHeightBottomMulti() +
+                    ","+ parameters.getHeightBottomAdd() +
+                    ","+ parameters.getHeightTopMulti() +
+                    ","+ parameters.getHeightTopAdd() +
+                    ","+ parameters.getTolerance() +
+                    ","+ parameters.getHeightBottomMultiByWidth() +
+                    ","+ parameters.getHeightBottomMultiByLength() +
+                    ","+ parameters.getHeightTopMultiByWidth() +
+                    ","+ parameters.getHeightTopMultiByLength() +
+                    ","+ part.getWorkCost().getWorkCost(false) +
+                    ","+ part.getWorkCost().getWorkCost(true) +
+                    ","+ a +
+                    ","+ b +
+                    ")");
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    public boolean deletePartById(int id){
+        boolean status = false;
+        try {
+            statmt = connection.createStatement();
+            status = statmt.execute("DELETE FROM constructionPart WHERE id =" + id);
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
     }
 
     private ResultSet connect(String sql) throws SQLException{
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        connection = DriverManager.getConnection("jdbc:sqlite:BoxCalc.sqlite");
         statmt = connection.createStatement();
         return statmt.executeQuery(sql);
     }
     private void close(){
         try {
-            resSet.close();
+            if (resSet != null) {
+                resSet.close();
+            }
             if (statmt != null) {
                 statmt.close();
             }
-            connection.close();
         } catch (SQLException e) {
 
         }
     }
+
+    public boolean ifMaterialIsDesign(int typeId) {
+        boolean is = false;
+        try {
+            resSet = connect("SELECT * FROM materialType WHERE id=" + typeId);
+            while(resSet.next())
+            {
+                is = 1 == resSet.getInt("design");
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return is;
+    }
+//    private void close(ResultSet resSet,Statement statmt,Connection connection){
+//        try {
+//            resSet.close();
+//            if (statmt != null) {
+//                statmt.close();
+//            }
+//            connection.close();
+//        } catch (SQLException e) {
+//
+//        }
+//    }
 }

@@ -49,10 +49,10 @@ public class PossibleResults<T extends Material> {
         this.material = material;
         this.part1 = part1;
         this.part2 = part2;
-        this.widthBottom = part1.getWidth();
-        this.lengthBottom = part1.getLength();
-        this.widthTop = part2.getWidth();
-        this.lengthTop = part2.getLength();
+        this.widthBottom = part1.getSizes().getWidth();
+        this.lengthBottom = part1.getSizes().getLength();
+        this.widthTop = part2.getSizes().getWidth();
+        this.lengthTop = part2.getSizes().getLength();
         this.name = name;
 
         widthBottom = round(widthBottom,2);
@@ -192,59 +192,24 @@ public class PossibleResults<T extends Material> {
         quantityMaterial = (int) Math.ceil(((quantity + 0.0) / quantBottom)*1.05);
     }
 
-    public PossibleResults(T material, double widthTop, double lengthTop, String name,int quantity) {
+    public PossibleResults(ConstructionPart part1, T material) {
+        if (part1.getName().equals("Магнит")){
+            int multi = 2;
+            if (part1.getSizes().getLength() > 20.0){
+                multi *= 2;
+            }
+            quantityMaterial = part1.getQuantity() * multi;
+        }else if (part1.getName().equals("Лента")){
+            quantityMaterial = part1.getQuantity() * 2;
+        }else if (part1.getName().equals("Шнур")){
+            quantityMaterial = part1.getQuantity();
+        }else if (part1.getName().equals("Люверс")){
+            quantityMaterial = part1.getQuantity() * 4;
+        }
         this.material = material;
-        this.widthTop = widthTop;
-        this.lengthTop = lengthTop;
-        this.widthBottom = widthTop;
-        this.lengthBottom = lengthTop;
-        this.name = name;
-        widthTop = round(widthTop,2);
-        lengthTop = round(lengthTop,2);
-
-        int qw = 0, ql = 0, qw2 = 0, ql2 = 0,q , q2;
-        double r,a = material.getWidth(),b = material.getLength(),c = material.getWidth() ,d = material.getLength();
-
-        while ((b - widthTop) >= 0) {
-            b = round(b - widthTop,2);
-            qw++;
-        }
-        while ((a - lengthTop) >= 0) {
-            a = round(a - lengthTop,2);
-            ql++;
-        }
-        while ((c - widthTop) >= 0) {
-            c = round(c - widthTop,2);
-            qw2++;
-        }
-        while ((d - lengthTop) >= 0) {
-            d = round(d - lengthTop,2);
-            ql2++;
-        }
-        q= ql * qw;
-        q2 = ql2 * qw2;
-        r = abs(a - b) - abs(c - d);
-
-        if (q > q2||((q == q2) && (r >= 0))) {
-            curResult = widthTop + "*" + qw + "+" + b + "по" + material.getLength() + "//" + lengthTop + "*" + ql + "+" + a + "по" + material.getWidth();
-            quantTop = q;
-            qbl = ql;
-            qbw = qw;
-            needTurnBottom = false;
-            ost = a * material.getLength() + b * (material.getWidth() - a);
-        }else if (q < q2||((q == q2) && (r < 0))) {
-            curResult = lengthTop + "*" + ql2 + "+" + d + "по" + material.getLength() + "//" + widthTop + "*" + qw2 + "+" + c + "по" + material.getWidth();
-            quantTop = q2;
-            qbl = ql2;
-            qbw = qw2;
-            needTurnBottom = true;
-            ost = c * material.getLength() + d * (material.getWidth() - c);
-        }
-        if (quantTop == 0)ost = 10000;
-        quantityMaterial = (int) Math.ceil(((quantity + 0.0)/quantTop)*1.05);
+        this.name = part1.getName();
+        this.part1 = part1;
     }
-
-
 
     private void setOst(T material, double widthBottom, double lengthBottom, double widthTop, double lengthTop, int quantBottom) {
         if (quantTop > quantBottom) quantTop = quantBottom;
@@ -293,6 +258,6 @@ public class PossibleResults<T extends Material> {
     @Override
     public String toString() {
 //        return name + " (" + widthBottom + "x" + lengthBottom;
-        return "(" + name + ") " + material.toString() + " " + quantityMaterial + " лист(ов) " + (int)material.getLength() + "x" + (int)material.getWidth();
+        return "(" + name + ") " + material.toString() + " " + quantityMaterial + " шт. " + (int)material.getLength() + "x" + (int)material.getWidth();
     }
 }

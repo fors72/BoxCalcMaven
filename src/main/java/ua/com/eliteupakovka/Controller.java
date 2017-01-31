@@ -5,7 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,34 +16,35 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-import ua.com.eliteupakovka.conctruction.DinamicConstruction;
+import ua.com.eliteupakovka.conctruction.DynamicConstruction;
 import ua.com.eliteupakovka.conctruction.Sizes;
-import ua.com.eliteupakovka.material.Carton;
 import ua.com.eliteupakovka.material.Material;
-import ua.com.eliteupakovka.material.Paper;
+import ua.com.eliteupakovka.material.MaterialType;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.sql.*;
 import java.util.List;
 import java.util.ResourceBundle;
 
 
 public class Controller implements Initializable {
     @FXML
-    ComboBox<String> cbCarton,cbPaper,cbKashirovka,cbTisnenie,cbLamination;
+    ComboBox<String> cbTisnenie,cbLamination;
     @FXML
-    ComboBox<DinamicConstruction> cbConstruction;
+    ComboBox<MaterialType> cbCarton,cbPaper,cbKashirovka;
+    @FXML
+    ComboBox<DynamicConstruction> cbConstruction;
     @FXML
     ComboBox<Sizes> cbBox;
     @FXML
     TextField fQuantity,fName,fW,fL,fH,fHc,sC1,sC2,toleranceOflengthPaperTop,toleranceOfwidthPaperTop,toleranceOflengthPapeBottomr,toleranceOfwidthPaperBottom,toleranceOflengthCartonTop,toleranceOfwidthCartonTop,toleranceOflengthCartonBottom,toleranceOfwidthCartonBottom,toleranceAll;
     @FXML
-    ListView<PossibleResults<? extends Material>> resultsListView,cartonListView,paperListView;
+    ListView<PossibleResults> resultsListView,cartonListView,paperListView;
     @FXML
     ListView<String> testDb;
     @FXML
@@ -53,36 +53,21 @@ public class Controller implements Initializable {
     @FXML
     CheckBox isToleranceAll;
 
-
-    private List<Kashirovka> kashirovkaList;
-    private List<Carton> cartonList;
-    private List<Paper> paperList;
-    private List<Sizes> sizesList;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String[] listOfSizeBox = {"30x20","32x28","43x30","30x20","32x28","43x30","30x20","32x28","43x30","30x20","32x28","43x30","30x20","32x28","43x30","30x20","32x28","43x30","30x20","32x28","43x30","30x20","32x28","43x30","30x20","32x28","43x30","30x20","32x28","43x30"};
-//        String[] listOfConstruction = {"кришка+дно","книга на магните","книга на ленте","шкатулка","гардеробная","круглая","с ложементом","с окошком из пласт.","с ложементом из флок."};
         String[] listOfTisnenie = {"нет","золото", "серебро", "черное", "красное", "другое"};
         String[] listOfLamination = {"нет", "глянцевая", "матовая"};
         CalcLab calcLab = CalcLab.get();
-        paperList = calcLab.getPaperList();
-        List<String> paper = Calc.getSimplListForView(paperList);
+        List<Sizes> sizesList = calcLab.getSizesList();
 
-        kashirovkaList = calcLab.getKashirovkaList();
-        List<String> kashirovka = Calc.getSimplListForView(kashirovkaList);
-
-        cartonList = calcLab.getCartonList();
-        List<String> carton = Calc.getSimplListForView(cartonList);
-
-        sizesList = calcLab.getSizesList();
-        ObservableList<DinamicConstruction> constructionOS = FXCollections.observableArrayList(calcLab.getConstructionList());
+        ObservableList<DynamicConstruction> constructionOS = FXCollections.observableArrayList(calcLab.getConstructionList());
         ObservableList<Sizes> boxOS = FXCollections.observableArrayList(sizesList);
-        ObservableList<String> cartonOS = FXCollections.observableArrayList(carton);
-        ObservableList<String> paperOS = FXCollections.observableArrayList(paper);
-        ObservableList<String> kashirovkaOS = FXCollections.observableArrayList(kashirovka);
+        ObservableList<MaterialType> cartonOS = FXCollections.observableArrayList(calcLab.getMaterialTypeList("картон"));
+        ObservableList<MaterialType> paperOS = FXCollections.observableArrayList(calcLab.getMaterialTypeList("бумага"));
+        ObservableList<MaterialType> kashirovkaOS = FXCollections.observableArrayList(calcLab.getMaterialTypeList("бумага"));
         ObservableList<String> tisnenieOS = FXCollections.observableArrayList(listOfTisnenie);
         ObservableList<String> laminationOS = FXCollections.observableArrayList(listOfLamination);
+
         cbConstruction.setItems(constructionOS);
         cbConstruction.setValue(constructionOS.get(0));
         cbBox.setItems(boxOS);
@@ -203,95 +188,18 @@ public class Controller implements Initializable {
         alert.showAndWait();
     }
 
-    public void OnLoadDb(){
-//        Connection conn = null;
-//        Statement stmt = null;
-//        try {
-//            Class.forName("org.sqlite.JDBC");
-//            conn = DriverManager.getConnection("jdbc:sqlite:construction.sqlite");
-//            conn.setAutoCommit(false);
-//            System.out.println(conn.isClosed());
-//
-//            stmt = conn.createStatement();
-//            stmt.execute("create table if not exists 'constr' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' text);");
-//            stmt.execute("INSERT INTO 'constr' ('name') VALUES ('test54'); ");
-//            ResultSet rs = stmt.executeQuery("SELECT * FROM constr;");
-//            ObservableList<String> listDb = FXCollections.observableArrayList();
-//            while ( rs.next() ) {
-//                int id = rs.getInt("id");
-//                String  name = rs.getString("name");
-//                listDb.add(name);
-//                System.out.println( "ID = " + id );
-//                System.out.println( "NAME = " + name );
-//                System.out.println();
-//            }
-//            testDb.setItems(listDb);
-//            conn.close();
-//            rs.close();
-//        } catch (Exception e) {
-//            write("D://exception.txt",System.getProperty("java.class.path"));
-//            e.printStackTrace();
-//        }
-
-    }
-    public void OnDownloadDb(){
-//        File file = new File("construction.sqlite");
-//        System.out.println(file.getAbsolutePath());
-//        Connection connection;
-//        Statement statmt;
-//        ResultSet resSet;
-//        try {
-//            Class.forName("org.sqlite.JDBC");
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            connection = DriverManager.getConnection("jdbc:sqlite:construction.sqlite");
-//            statmt = connection.createStatement();
-////            statmt.execute("CREATE TABLE if not exists 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' text, 'phone' INT);");
-//            statmt.execute("INSERT INTO 'constr' ('name') VALUES ('test'); ");
-//            resSet = statmt.executeQuery("SELECT * FROM constr");
-//            while(resSet.next())
-//            {
-//                int id = resSet.getInt("id");
-//                String  name = resSet.getString("name");
-//                System.out.println( "ID = " + id );
-//                System.out.println( "name = " + name );
-//                System.out.println();
-//            }
-//
-//            System.out.println("Таблица создана или уже существует.");
-//            if (!connection.isClosed()){
-//                System.out.println("connected");
-//            }
-//            connection.close();
-//            if (statmt != null) {
-////                statmt.close();
-//            }
-//            resSet.close();
-//            if (connection.isClosed()){
-//                System.out.println("disconnected");
-//            }
-//        } catch (SQLException e) {
-//            write("D://exception.txt",System.getProperty("java.class.path"));
-//            e.printStackTrace();
-//        }
-    }
-
-
     public void OnCalc() {
         Order order;
         try {
-            Parameters parameters;
-            if (isToleranceAll.isSelected()) {
-                parameters = new Parameters(Double.valueOf(toleranceAll.getText()));
-            }else {
-                parameters = new Parameters(Double.valueOf(toleranceOfwidthCartonBottom.getText()),Double.valueOf(toleranceOflengthCartonBottom.getText()),Double.valueOf(toleranceOfwidthCartonTop.getText()),Double.valueOf(toleranceOflengthCartonTop.getText()),Double.valueOf(toleranceOfwidthPaperBottom.getText()),Double.valueOf(toleranceOflengthPapeBottomr.getText()),Double.valueOf(toleranceOfwidthPaperTop.getText()),Double.valueOf(toleranceOflengthPaperTop.getText()));
+            //TODO: check w l hb ht
+            Sizes sizes;
+            if (cbBox.getValue().getId() == 0) {
+                sizes = new Sizes(0,Double.valueOf(fW.getText()),Double.valueOf(fL.getText()), Double.valueOf(fH.getText()),Double.valueOf(fHc.getText()));
+            } else {
+                sizes = cbBox.getValue();
             }
-            Calc calc = new Calc(kashirovkaList,fName.getText(),Integer.valueOf(fQuantity.getText()),cbCarton.getValue(),
-                    cbPaper.getValue(),cbConstruction.getValue().toString(),cbKashirovka.getValue(),cbTisnenie.getValue(),
-                    cbLamination.getValue(),Double.valueOf(fW.getText()),Double.valueOf(fL.getText()),
-                    Double.valueOf(fHc.getText()),Double.valueOf(fH.getText()),cartonList,paperList,parameters);
+            Calc calc = new Calc(fName.getText(),Integer.valueOf(fQuantity.getText()),cbConstruction.getValue(),cbTisnenie.getValue(),
+                    cbLamination.getValue(),sizes, cbCarton.getValue().getId(),cbPaper.getValue().getId(),cbKashirovka.getValue().getId(),null);
             order = new Order(calc);
         }catch (Exception e){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -318,10 +226,10 @@ public class Controller implements Initializable {
         stretchCost.setText("Стрейч"  + order.stretchCost);
         extraCost.setText("Доп. " + order.extraCost);
         laminationCost.setText("Ламинация" + order.laminationCost);
-        ObservableList<PossibleResults<? extends Material>> observableListCarton = FXCollections.observableArrayList(order.listTopResultCarton);
-        ObservableList<PossibleResults<? extends Material>> observableListPaper = FXCollections.observableArrayList(order.listTopResultPaper);
+        ObservableList<PossibleResults> observableListCarton = FXCollections.observableArrayList(order.listTopResult);
+//        ObservableList<PossibleResults<? extends Material>> observableListPaper = FXCollections.observableArrayList(order.listTopResultPaper);
         cartonListView.setItems(observableListCarton);
-        paperListView.setItems(observableListPaper);
+//        paperListView.setItems(observableListPaper);
         resultsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -376,6 +284,35 @@ public class Controller implements Initializable {
             OnCalc();
         }
     }
+
+    public void OnAdd(){
+        Stage primaryStage = new Stage();
+        AnchorPane root = null;
+        try {
+            root = (AnchorPane) new FXMLLoader().load(getClass().getResourceAsStream("/fxml/open_editor.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        primaryStage.setTitle("Добавить");
+        primaryStage.setMinWidth(290);
+        primaryStage.setMinHeight(300);
+        primaryStage.setScene(new Scene(root, 290, 270));
+        primaryStage.show();
+    }
+//    public void OnAddConstruction(){
+//        Stage primaryStage = new Stage();
+//        AnchorPane root = null;
+//        try {
+//            root = new FXMLLoader().load(getClass().getResourceAsStream("/fxml/edit_construction.fxml"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        primaryStage.setTitle("Конструкции");
+//        primaryStage.setMinWidth(800);
+//        primaryStage.setMinHeight(900);
+//        primaryStage.setScene(new Scene(root, 800, 900));
+//        primaryStage.show();
+//    }
 
     private void drawCut(GraphicsContext gc,PossibleResults<? extends Material> possibleResults){
         double startLength = 20;

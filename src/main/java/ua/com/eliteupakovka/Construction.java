@@ -7,7 +7,7 @@ import ua.com.eliteupakovka.material.Paper;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
+@Deprecated
 class Construction {
 
     String name;
@@ -15,10 +15,10 @@ class Construction {
     List<PossibleResults<Paper>> listTopResultPaper = new ArrayList<>();
     List<Carton> cartonSelectList;
     List<Paper> paperSelectList;
-    List<Kashirovka> kashirovkaSelectList;
+    List<Paper> kashirovkaSelectList;
     double addCosts;
 
-    Construction(String name, double width,double length,double heightBottom,double heightTop,List<Carton> cartonSelectList, List<Paper> paperSelectList,List<Kashirovka> kashirovkaSelectList,int quantity,Parameters parameters) {
+    Construction(String name, double width,double length,double heightBottom,double heightTop,List<Carton> cartonSelectList, List<Paper> paperSelectList,List<Paper> kashirovkaSelectList,int quantity,Parameters parameters) {
         this.name = name;
         this.cartonSelectList = cartonSelectList;
         this.paperSelectList = paperSelectList;
@@ -192,10 +192,10 @@ class Construction {
 
 
     private PossibleResults<Carton> bottomC(double width,double length,double heightBottom,double heightTop, String name,int quantity,Parameters parameters){
-        double cartonWidthB = width + heightBottom * 2 + parameters.getToleranceOfwidthCartonBottom();
-        double cartonLengthB = length + heightBottom * 2 +  parameters.getToleranceOflengthCartonBottom();
-        double cartonWidthT = width + heightTop * 2 + 0.5 + parameters.getToleranceOfwidthCartonTop();
-        double cartonLengthT = length + heightTop * 2 + 0.5 + parameters.getToleranceOflengthCartonTop();
+        double cartonWidthB = width + heightBottom * 2; //+ parameters.getToleranceOfwidthCartonBottom();
+        double cartonLengthB = length + heightBottom * 2; // +  parameters.getToleranceOflengthCartonBottom();
+        double cartonWidthT = width + heightTop * 2 + 0.5; // + parameters.getToleranceOfwidthCartonTop();
+        double cartonLengthT = length + heightTop * 2 + 0.5; // + parameters.getToleranceOflengthCartonTop();
         List<PossibleResults> resultsList = new ArrayList<>();
         for (Carton ct:cartonSelectList){
             PossibleResults<Carton> results = new PossibleResults<>(ct,cartonWidthB, cartonLengthB,cartonWidthT,cartonLengthT, name,quantity);
@@ -204,8 +204,8 @@ class Construction {
         return getMinOst(resultsList);
     }
     private PossibleResults<Carton> topC(double width,double length,double heightTop, String name,int quantity,Parameters parameters){
-        double cartonWidthT = width + heightTop * 2 +  0.5 + parameters.getToleranceOfwidthCartonTop();
-        double cartonLengthT = length + heightTop * 2 + 0.5 + parameters.getToleranceOflengthCartonTop();
+        double cartonWidthT = width + heightTop * 2 +  0.5; // + parameters.getToleranceOfwidthCartonTop();
+        double cartonLengthT = length + heightTop * 2 + 0.5; // + parameters.getToleranceOflengthCartonTop();
         List<PossibleResults> resultsList3 = new ArrayList<>();
         for (Carton ct:cartonSelectList){
             PossibleResults<Carton> results = new PossibleResults<>(ct,cartonWidthT,cartonLengthT,cartonWidthT,cartonLengthT, name,quantity);
@@ -214,10 +214,10 @@ class Construction {
         return getMinOst(resultsList3);
     }
     private PossibleResults<Paper> bottomP(double width,double length,double heightBottom,double heightTop, String name,int quantity,Parameters parameters){
-        double paperWidthB = width + heightBottom * 2 + 3 + parameters.getToleranceOfwidthPaperBottom();
-        double paperLengthB = length + heightBottom * 2 + 3 + parameters.getToleranceOflengthPapeBottomr();
-        double paperWidthT = width + heightTop * 2 + 0.5 + 3 + parameters.getToleranceOfwidthPaperTop();
-        double paperLengthT = length + heightTop * 2 + 0.5 + 3 + parameters.getToleranceOflengthPaperTop();
+        double paperWidthB = width + heightBottom * 2 + 3; // + parameters.getToleranceOfwidthPaperBottom();
+        double paperLengthB = length + heightBottom * 2 + 3; // + parameters.getToleranceOflengthPapeBottomr();
+        double paperWidthT = width + heightTop * 2 + 0.5 + 3; // + parameters.getToleranceOfwidthPaperTop();
+        double paperLengthT = length + heightTop * 2 + 0.5 + 3; // + parameters.getToleranceOflengthPaperTop();
         List<PossibleResults> resultsList1 = new ArrayList<>();
         for (Paper ct:paperSelectList){
             PossibleResults<Paper> results = new PossibleResults<>(ct,paperWidthB, paperLengthB,paperWidthT,paperLengthT, name,quantity);
@@ -229,8 +229,8 @@ class Construction {
 
     }
     private PossibleResults<Paper> topP(double width,double length,double heightTop, String name,int quantity,Parameters parameters){
-        double paperWidthT = width + heightTop * 2 + 0.5 + 3 + parameters.getToleranceOfwidthPaperTop();
-        double paperLengthT = length + heightTop * 2 + 0.5 + 3 + parameters.getToleranceOflengthPaperTop();
+        double paperWidthT = width + heightTop * 2 + 0.5 + 3; // + parameters.getToleranceOfwidthPaperTop();
+        double paperLengthT = length + heightTop * 2 + 0.5 + 3; // + parameters.getToleranceOflengthPaperTop();
         List<PossibleResults> resultsList4 = new ArrayList<>();
         for (Paper ct:paperSelectList){
             PossibleResults<Paper> results = new PossibleResults<>(ct,paperWidthT,paperLengthT,paperWidthT,paperLengthT, name,quantity);
@@ -244,8 +244,8 @@ class Construction {
         double kashirovkaWidthT = width + heightTop * 2 + 1 - 1;
         double kashirovkaLengthT = length + heightTop * 2 + 1 - 1;
         List<PossibleResults> resultsList2 = new ArrayList<>();
-        for (Kashirovka ct:kashirovkaSelectList){
-            PossibleResults<Kashirovka> results = new PossibleResults<>(ct,kashirovkaWidthB, kashirovkaLengthB,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
+        for (Paper ct:kashirovkaSelectList){
+            PossibleResults<Paper> results = new PossibleResults<>(ct,kashirovkaWidthB, kashirovkaLengthB,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
             resultsList2.add(results);
         }
         return getMinOst(resultsList2);
@@ -255,8 +255,8 @@ class Construction {
         double kashirovkaWidthT = width + heightTop * 2 + 1 - 1;
         double kashirovkaLengthT = length + heightTop * 2 + 1 - 1;
         List<PossibleResults> resultsList5 = new ArrayList<>();
-        for (Kashirovka ct:kashirovkaSelectList){
-            PossibleResults<Kashirovka> results = new PossibleResults<>(ct,kashirovkaWidthT,kashirovkaLengthT,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
+        for (Paper ct:kashirovkaSelectList){
+            PossibleResults<Paper> results = new PossibleResults<>(ct,kashirovkaWidthT,kashirovkaLengthT,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
             resultsList5.add(results);
         }
         return getMinOst(resultsList5);
@@ -342,8 +342,8 @@ class Construction {
         double kashirovkaWidthT = length + 2.5;
         double kashirovkaLengthT = width + 0.4 * 2 - 0.5;
         List<PossibleResults> resultsList2 = new ArrayList<>();
-        for (Kashirovka ct:kashirovkaSelectList){
-            PossibleResults<Kashirovka> results = new PossibleResults<>(ct,kashirovkaWidthB, kashirovkaLengthB,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
+        for (Paper ct:kashirovkaSelectList){
+            PossibleResults<Paper> results = new PossibleResults<>(ct,kashirovkaWidthB, kashirovkaLengthB,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
             resultsList2.add(results);
         }
         return getMinOst(resultsList2);
@@ -353,8 +353,8 @@ class Construction {
         double kashirovkaWidthT = length + 2.5;
         double kashirovkaLengthT = width + 0.4 * 2 - 0.5;
         List<PossibleResults> resultsList5 = new ArrayList<>();
-        for (Kashirovka ct:kashirovkaSelectList){
-            PossibleResults<Kashirovka> results = new PossibleResults<>(ct,kashirovkaWidthT,kashirovkaLengthT,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
+        for (Paper ct:kashirovkaSelectList){
+            PossibleResults<Paper> results = new PossibleResults<>(ct,kashirovkaWidthT,kashirovkaLengthT,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
             resultsList5.add(results);
         }
         return getMinOst(resultsList5);
@@ -418,8 +418,8 @@ class Construction {
         double kashirovkaWidthT = length + 2.7 + heightBottom;
         double kashirovkaLengthT = width + 0.4 * 2 - 0.5;
         List<PossibleResults> resultsList2 = new ArrayList<>();
-        for (Kashirovka ct:kashirovkaSelectList){
-            PossibleResults<Kashirovka> results = new PossibleResults<>(ct,kashirovkaWidthB, kashirovkaLengthB,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
+        for (Paper ct:kashirovkaSelectList){
+            PossibleResults<Paper> results = new PossibleResults<>(ct,kashirovkaWidthB, kashirovkaLengthB,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
             resultsList2.add(results);
         }
         return getMinOst(resultsList2);
@@ -429,8 +429,8 @@ class Construction {
         double kashirovkaWidthT = length + 2.7 + heightBottom;
         double kashirovkaLengthT = width + 0.4 * 2 - 0.5;
         List<PossibleResults> resultsList5 = new ArrayList<>();
-        for (Kashirovka ct:kashirovkaSelectList){
-            PossibleResults<Kashirovka> results = new PossibleResults<>(ct,kashirovkaWidthT,kashirovkaLengthT,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
+        for (Paper ct:kashirovkaSelectList){
+            PossibleResults<Paper> results = new PossibleResults<>(ct,kashirovkaWidthT,kashirovkaLengthT,kashirovkaWidthT,kashirovkaLengthT, name,quantity);
             resultsList5.add(results);
         }
 //        return getMinOst(resultsList5);
@@ -451,24 +451,24 @@ class Construction {
     private PossibleResults<Carton> circleC(double o, String name,int quantity){
         List<PossibleResults> resultsList5 = new ArrayList<>();
         for (Carton ct:cartonSelectList){
-            PossibleResults<Carton> results = new PossibleResults<>(ct,o,o, name,quantity);
-            resultsList5.add(results);
+//            PossibleResults<Carton> results = new PossibleResults<>(ct,o,o, name,quantity);
+//            resultsList5.add(results);
         }
         return getMinOst(resultsList5);
     }
     private PossibleResults<Paper> circleP(double o, String name,int quantity){
         List<PossibleResults> resultsList5 = new ArrayList<>();
         for (Paper ct:paperSelectList){
-            PossibleResults<Paper> results = new PossibleResults<>(ct,o,o, name,quantity);
-            resultsList5.add(results);
+//            PossibleResults<Paper> results = new PossibleResults<>(ct,o,o, name,quantity);
+//            resultsList5.add(results);
         }
         return getMinOst(resultsList5);
     }
     private PossibleResults<Paper> circleK(double o, String name,int quantity){
         List<PossibleResults> resultsList5 = new ArrayList<>();
-        for (Kashirovka ct:kashirovkaSelectList){
-            PossibleResults<Kashirovka> results = new PossibleResults<>(ct,o,o, name,quantity);
-            resultsList5.add(results);
+        for (Paper ct:kashirovkaSelectList){
+//            PossibleResults<Paper> results = new PossibleResults<>(ct,o,o, name,quantity);
+//            resultsList5.add(results);
         }
         return getMinOst(resultsList5);
     }
@@ -503,8 +503,9 @@ class Construction {
     }
     private PossibleResults<Paper> tapeK(double width,double length,int count, String name,int quantity){
         List<PossibleResults> resultsList = new ArrayList<>();
-        for (Kashirovka ct:kashirovkaSelectList){
-            PossibleResults<Kashirovka> results = new PossibleResults<>(ct,width, length,width,length, name,quantity);
+        for (Paper ct:kashirovkaSelectList){
+            PossibleResults<Paper> results = new PossibleResults<>(ct,width, length,width,length, name,quantity);
+            int i = 0;//block duplication
             resultsList.add(results);
         }
         PossibleResults<Paper> results = getMinOst(resultsList);

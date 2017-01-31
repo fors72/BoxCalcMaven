@@ -1,6 +1,8 @@
 package ua.com.eliteupakovka;
 
-import ua.com.eliteupakovka.material.Carton;
+import ua.com.eliteupakovka.conctruction.ConstructionPart;
+import ua.com.eliteupakovka.conctruction.DynamicConstruction;
+import ua.com.eliteupakovka.conctruction.Sizes;
 import ua.com.eliteupakovka.material.Paper;
 
 import java.util.ArrayList;
@@ -9,43 +11,38 @@ import java.util.List;
 class Order {
     String name;
     int quantity;
-    double widthBox;
-    double lengthBox;
-    double heightB;
-    double heightT;
+    Sizes sizes;
     double cost,cartonCost,paperCost,tapeCost,glueCost,workCost,cuttingCost,pressinCost,rentCost,stretchCost,extraCost,laminationCost;
     double prise;
 
-    Construction construction;
-    List<PossibleResults<Carton>> listTopResultCarton = new ArrayList<>();
-    List<PossibleResults<Paper>> listTopResultPaper = new ArrayList<>();
+    DynamicConstruction construction;
+    List<PossibleResults> listTopResult = new ArrayList<>();
+
 
 
 
     Order(Calc calc) {
-        this.construction = calc.constructionNew;
+        this.construction = calc.construction;
         name = calc.name;
         quantity = calc.quantity;
-        widthBox = calc.width;
-        lengthBox = calc.length;
-        heightB = calc.heightBottom;
-        heightT = calc.heightTop;
-        listTopResultCarton= calc.constructionNew.listTopResultCarton;
-        listTopResultPaper = calc.constructionNew.listTopResultPaper;
-        extraCost = calc.constructionNew.addCosts * quantity;
+        this.sizes = calc.construction.getSizes();
+        listTopResult = calc.construction.listTopResult;
+
         int quantCarton = 0,quantPaper= 0;
-        for (PossibleResults pr:listTopResultCarton){
-            cartonCost = cartonCost + (pr.quantityMaterial*pr.material.getCost());
-            quantCarton = quantCarton + pr.quantityMaterial;
-        }
-        double lamin = 0;
-        for (PossibleResults pr:listTopResultPaper){
-            paperCost = paperCost +(pr.quantityMaterial * pr.material.getCost());
-            quantPaper = quantPaper + pr.quantityMaterial;
-            if (pr.lamin > 0){
-                lamin = lamin + pr.lamin;
+        for (PossibleResults pr: listTopResult){
+            if (pr.part1.getType().equals("картон")){
+                cartonCost += pr.quantityMaterial*pr.material.getCost();
+                quantCarton += pr.quantityMaterial;
+            }else if (pr.part1.getType().equals("бумага") || pr.part1.getType().equals("кашировка")){
+                paperCost += pr.quantityMaterial*pr.material.getCost();
+                quantPaper += pr.quantityMaterial;
+            }else {
+                extraCost += pr.quantityMaterial*pr.material.getCost();
             }
+
         }
+
+
         tapeCost = calc.costs.getTape() * quantity;
         glueCost = calc.costs.getGlue() * quantity;
         rentCost = calc.costs.getRent() * quantity;
@@ -54,10 +51,18 @@ class Order {
         if ((quantCarton* calc.costs.getCutCarton() + quantPaper * calc.costs.getCutPaper()) > calc.costs.getMinCutting()) cuttingCost = (quantCarton * calc.costs.getCutCarton() + quantPaper * calc.costs.getCutPaper());
         pressinCost = calc.costs.getFitting() + calc.costs.getCutting() * quantity;
 
-        if (calc.paper.equals("меловка")|| calc.paper.equals("печать на меловке")){
-            workCost = 3 * quantity;
-        }else if (calc.paper.equals("imitlin")|| calc.paper.equals("stardream")|| calc.paper.equals("malmero")){
-            workCost = 7 * quantity;
+        workCost = 0;
+
+        CalcLab calcLab = CalcLab.get();
+        double lamin = 0;
+        for (ConstructionPart cp: calc.construction.parts){
+            if (cp.getType().equals("бумага")){
+                if (cp.isLaminable()){
+                    lamin += cp.getSizes().getWidth() * cp.getSizes().getLength();
+                }
+            }
+            workCost += (cp.getWorkCost().getWorkCost(calcLab.ifMaterialIsDesign(cp.getMaterialTypeId()))) * quantity;
+
         }
 
         if (calc.lamination.equals("матовая")){
