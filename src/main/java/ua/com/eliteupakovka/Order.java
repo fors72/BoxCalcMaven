@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Order {
-    String name;
     int quantity;
     Sizes sizes;
     double cost,cartonCost,paperCost,tapeCost,glueCost,workCost,cuttingCost,pressinCost,rentCost,stretchCost,extraCost,laminationCost;
@@ -23,7 +22,6 @@ class Order {
 
     Order(Calc calc) {
         this.construction = calc.construction;
-        name = calc.name;
         quantity = calc.quantity;
         this.sizes = calc.construction.getSizes();
         listTopResult = calc.construction.listTopResult;
@@ -49,7 +47,6 @@ class Order {
         stretchCost = calc.costs.getStretch() * quantity;
         if ((quantCarton* calc.costs.getCutCarton() + quantPaper * calc.costs.getCutPaper()) <= calc.costs.getMinCutting()) cuttingCost = calc.costs.getMinCutting();
         if ((quantCarton* calc.costs.getCutCarton() + quantPaper * calc.costs.getCutPaper()) > calc.costs.getMinCutting()) cuttingCost = (quantCarton * calc.costs.getCutCarton() + quantPaper * calc.costs.getCutPaper());
-        pressinCost = calc.costs.getFitting() + calc.costs.getCutting() * quantity;
 
         workCost = 0;
 
@@ -63,6 +60,7 @@ class Order {
             }
             workCost += (cp.getWorkCost().getWorkCost(calcLab.ifMaterialIsDesign(cp.getMaterialTypeId()))) * quantity;
 
+            pressinCost += cp.isPressing() ? 50 + cp.getQuantity()* 0.06 : 0;
         }
 
         if (calc.lamination.equals("матовая")){

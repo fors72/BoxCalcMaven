@@ -27,7 +27,6 @@ public class DynamicConstruction {
 
 
     public DynamicConstruction(List<ConstructionPart> parts, WorkCost workCost, String name, int id, Sizes sizes, int cartonId, int paperId, int kashirovkaId, int quantity) {
-        this.parts = parts;
         this.workCost = workCost;
         this.sizes = sizes;
         this.name = name;
@@ -35,6 +34,18 @@ public class DynamicConstruction {
         this.cartonId = cartonId;
         this.paperId = paperId;
         this.kashirovkaId = kashirovkaId;
+
+
+        if (kashirovkaId == -10) {
+            for (int i = 0;i < parts.size();i++){
+                if (parts.get(i).getType().equals("кашировка")){
+                    parts.remove(i);
+                    i--;
+                }
+
+            }
+        }
+        this.parts = parts;
         initListTopResult(parts);
 
     }

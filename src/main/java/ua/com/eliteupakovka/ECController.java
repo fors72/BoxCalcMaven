@@ -10,12 +10,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import javafx.scene.input.MouseEvent;
-import ua.com.eliteupakovka.conctruction.ConstructionPart;
-import ua.com.eliteupakovka.conctruction.DynamicConstruction;
-import ua.com.eliteupakovka.conctruction.WorkCost;
+import ua.com.eliteupakovka.conctruction.*;
 import ua.com.eliteupakovka.material.MaterialType;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 
@@ -24,6 +23,7 @@ public class ECController implements Initializable {
     CalcLab calcLab = CalcLab.get();
 
     ConstructionPart selectPart;
+    ConstructionPartSize constructionPartSize;
 
     @FXML
     ComboBox<DynamicConstruction> cbConstruction;
@@ -33,20 +33,26 @@ public class ECController implements Initializable {
     @FXML
     ComboBox<MaterialType> cbMaterial;
     @FXML
+    ComboBox<Sizes> cbEnableSize;
+    @FXML
     CheckBox chbPressing, chbLaminable;
     @FXML
-    TextField tfPartName,tfConstruction,tfWM,tfLM,tfHBM,tfHTM,tfWHBM,tfHLBM,tfHWTM,tfHLTM,tfWA,tfLA,tfHBA,tfHTA,tfTolerance,tfWS,tfWD;
+    TextField tfPartName,tfConstruction,tfWM,tfLM,tfHBM,tfHTM,tfWHBM,tfHLBM,tfHWTM,tfHLTM,tfWA,tfLA,tfHBA,tfHTA,tfTolerance,tfWS,tfWD,tfEWS,tfEWD;
 
     @FXML
     ListView<ConstructionPart> lvConstructionPart;
 
+    ChangeListener<Number> numberChangeListener;
+
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String[] listOfMaterialTypre = {"картон", "бумага", "кашировка", "другое"};
+        String[] listOfMaterialType = {"картон", "бумага", "кашировка", "другое"};
 
 
         ObservableList<DynamicConstruction> constructionOS = FXCollections.observableArrayList(calcLab.getConstructionList());
-        ObservableList<String> materialType = FXCollections.observableArrayList(listOfMaterialTypre);
+        ObservableList<String> materialType = FXCollections.observableArrayList(listOfMaterialType);
 //        constructionOS.add(new DynamicConstruction("Создать конструкцию",0,null));
         cbMaterialType.setItems(materialType);
         cbMaterialType.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
@@ -67,12 +73,14 @@ public class ECController implements Initializable {
             }
         });
         cbConstruction.setItems(constructionOS);
-        cbConstruction.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        numberChangeListener = new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                updateUIConstruction(cbConstruction.getItems().get((int)newValue).getId());
+                updateUIConstructionPart(cbConstruction.getItems().get((int)newValue).getId());
             }
-        });
+        };
+        cbConstruction.getSelectionModel().selectedIndexProperty().addListener(numberChangeListener);
+
         cbConstruction.setValue(constructionOS.get(0));
         lvConstructionPart.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -82,16 +90,51 @@ public class ECController implements Initializable {
             }
         });
 
+        cbEnableSize.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                updateUIWorccostDependSize();
+            }
+        });
+
     }
 
-    public void updateUIConstruction(int id){
+    private void updateUIWorccostDependSize() {
+        if (cbEnableSize.getValue() != null) {
+            constructionPartSize = calcLab.getConstructionPartSizeByThisId(lvConstructionPart.getSelectionModel().getSelectedItem().getId(),cbEnableSize.getValue().getId());
+            boolean ifIs = constructionPartSize.getId() != 0;
+            tfEWS.setText(String.valueOf(ifIs ? constructionPartSize.getWs() : "-"));
+            tfEWD.setText(String.valueOf(ifIs ? constructionPartSize.getWd() : "-"));
+        }
+
+    }
+    public void addWorccostDependSize(){
+        if (selectPart.getId() != 0 && cbEnableSize.getValue() != null) {
+            calcLab.insertConstructionPartSize(new ConstructionPartSize(0,cbEnableSize.getValue().getId(),selectPart.getConstrId(),selectPart.getId(),Double.valueOf(tfEWS.getText()),Double.valueOf(tfEWD.getText())));
+            updateUIWorccostDependSize();
+        }
+    }
+    public void deleteWorccostDependSize(){
+        calcLab.deleteConstructionPartSize(constructionPartSize.getId());
+        updateUIWorccostDependSize();
+    }
+
+    public void updateUIConstructionPart(int id){
         ObservableList<ConstructionPart> constructionParts = FXCollections.observableArrayList(calcLab.getConstructionPartListByConstructionId(id));
         constructionParts.add(new ConstructionPart(0,id,0,"+ добавить деталь","картон","",null,0,false,false,new WorkCost(0,0),new Parameters(0,0,0,0,0,0,0,0,0,0,0,0,0)));
         lvConstructionPart.setItems(constructionParts);
         lvConstructionPart.getSelectionModel().select(0);
         selectPart = lvConstructionPart.getSelectionModel().getSelectedItem();
         bindView();
-
+        ObservableList<Sizes> sizes = FXCollections.observableArrayList(calcLab.getSizeListByConstructionId(cbConstruction.getValue().getId()));
+        cbEnableSize.setItems(sizes);
+    }
+    private void updateUIConstructionList(){
+        cbConstruction.getSelectionModel().selectedIndexProperty().removeListener(numberChangeListener);
+        ObservableList<DynamicConstruction> constructionOS = FXCollections.observableArrayList(calcLab.getConstructionList());
+        cbConstruction.setItems(constructionOS);
+        cbConstruction.getSelectionModel().selectedIndexProperty().addListener(numberChangeListener);
+        cbConstruction.setValue(constructionOS.get(constructionOS.size()-1));
     }
     private void bindView(){
         if (selectPart.getId() != 0) {
@@ -127,6 +170,8 @@ public class ECController implements Initializable {
                 cbMaterial.setValue(mt);
             }
         }
+        updateUIWorccostDependSize();
+
     }
     public void bindPart(){
         Parameters parameters = new Parameters(Double.valueOf(tfTolerance.getText()),Double.valueOf(tfWM.getText()),
@@ -148,10 +193,39 @@ public class ECController implements Initializable {
         } else {
             calcLab.insertConstructionPart(selectPart);
         }
-        updateUIConstruction(selectPart.getConstrId());
+        updateUIConstructionPart(selectPart.getConstrId());
     }
     public void deletePart(){
-        calcLab.deletePartById(selectPart.getId());
-        updateUIConstruction(selectPart.getConstrId());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("!!!");
+        alert.setContentText("Вы действительно хотите удалить детать " + selectPart.getName());
+        alert.setHeaderText("");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            calcLab.deletePartById(selectPart.getId());
+            updateUIConstructionPart(selectPart.getConstrId());
+        }
+    }
+    public void createConstruction(){
+        calcLab.insertConstruction(tfConstruction.getText());
+        updateUIConstructionList();
+    }
+    public void deleteConstruction(){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("!!!");
+        alert.setContentText("Вы действительно хотите удалить конструкцию " + cbConstruction.getValue().getName());
+        alert.setHeaderText("");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            Alert alert2 = new Alert(Alert.AlertType.CONFIRMATION);
+            alert2.setTitle("!!!");
+            alert2.setContentText("Данная конструкция и все детали к ней будут удалены,удалить?");
+            alert2.setHeaderText("");
+            Optional<ButtonType> result2 = alert.showAndWait();
+            if (result2.get() == ButtonType.OK){
+                calcLab.deleteConstructionById(cbConstruction.getValue().getId());
+                updateUIConstructionList();
+            }
+        }
     }
 }

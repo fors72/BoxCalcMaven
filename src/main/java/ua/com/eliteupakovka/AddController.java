@@ -33,10 +33,32 @@ public class AddController implements Initializable {
     }
 
     public void editSize(){
-
+        Stage primaryStage = new Stage();
+        AnchorPane root = null;
+        try {
+            root = new FXMLLoader().load(getClass().getResourceAsStream("/fxml/edit_size.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        primaryStage.setTitle("Размеры");
+        primaryStage.setMinWidth(800);
+        primaryStage.setMinHeight(900);
+        primaryStage.setScene(new Scene(root, 800, 900));
+        primaryStage.show();
     }
 
     public void editMaterial(){
-
+        Stage primaryStage = new Stage();
+        AnchorPane root = null;
+        try {
+            root = new FXMLLoader().load(getClass().getResourceAsStream("/fxml/edit_material.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        primaryStage.setTitle("Материалы");
+        primaryStage.setMinWidth(800);
+        primaryStage.setMinHeight(900);
+        primaryStage.setScene(new Scene(root, 800, 900));
+        primaryStage.show();
     }
 }

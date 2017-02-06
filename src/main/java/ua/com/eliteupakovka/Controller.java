@@ -33,8 +33,9 @@ import java.util.ResourceBundle;
 
 
 public class Controller implements Initializable {
+    private CalcLab calcLab = CalcLab.get();
     @FXML
-    ComboBox<String> cbTisnenie,cbLamination;
+    ComboBox<String> cbLamination;
     @FXML
     ComboBox<MaterialType> cbCarton,cbPaper,cbKashirovka;
     @FXML
@@ -50,49 +51,61 @@ public class Controller implements Initializable {
     @FXML
     Label cost,prise,cartonCost,paperCost,tapeCost,glueCost,workCost,cuttingCost,pressinCost,rentCost,stretchCost,extraCost,laminationCost;
 
-    @FXML
-    CheckBox isToleranceAll;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String[] listOfTisnenie = {"нет","золото", "серебро", "черное", "красное", "другое"};
+
         String[] listOfLamination = {"нет", "глянцевая", "матовая"};
-        CalcLab calcLab = CalcLab.get();
-        List<Sizes> sizesList = calcLab.getSizesList();
+
+
 
         ObservableList<DynamicConstruction> constructionOS = FXCollections.observableArrayList(calcLab.getConstructionList());
-        ObservableList<Sizes> boxOS = FXCollections.observableArrayList(sizesList);
+
         ObservableList<MaterialType> cartonOS = FXCollections.observableArrayList(calcLab.getMaterialTypeList("картон"));
         ObservableList<MaterialType> paperOS = FXCollections.observableArrayList(calcLab.getMaterialTypeList("бумага"));
         ObservableList<MaterialType> kashirovkaOS = FXCollections.observableArrayList(calcLab.getMaterialTypeList("бумага"));
-        ObservableList<String> tisnenieOS = FXCollections.observableArrayList(listOfTisnenie);
+        kashirovkaOS.add(new MaterialType(-10,"нет",0));
         ObservableList<String> laminationOS = FXCollections.observableArrayList(listOfLamination);
 
         cbConstruction.setItems(constructionOS);
+        cbConstruction.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                ObservableList<Sizes> boxOS = FXCollections.observableArrayList();
+                boxOS.add(new Sizes(0,0,0,0,0));
+                boxOS.addAll(calcLab.getSizeListByConstructionId(cbConstruction.getItems().get((int)newValue).getId()));
+                cbBox.setItems(boxOS);
+                if (boxOS.get(0) != null) {
+                    cbBox.setValue(boxOS.get(0));
+                }
+            }
+        });
         cbConstruction.setValue(constructionOS.get(0));
-        cbBox.setItems(boxOS);
-        cbBox.setValue(boxOS.get(0));
+
         cbBox.valueProperty().addListener(new ChangeListener<Sizes>() {
             @Override
             public void changed(ObservableValue<? extends Sizes> observable, Sizes oldValue, Sizes newValue) {
-                if (newValue.toString().equals("Другой")){
-                    fW.setText("");
-                    fL.setText("");
-                    fH.setText("");
-                    fHc.setText("");
-                    fW.setDisable(false);
-                    fL.setDisable(false);
-                    fH.setDisable(false);
-                    fHc.setDisable(false);
-                }else {
-                    fW.setText(newValue.getWidth() + "");
-                    fL.setText(newValue.getLength() + "");
-                    fH.setText(newValue.getHeightBottom() + "");
-                    fHc.setText(newValue.getHeightTop() + "");
-                    fW.setDisable(true);
-                    fL.setDisable(true);
-                    fH.setDisable(true);
-                    fHc.setDisable(true);
+                if (newValue != null) {
+                    if (newValue.toString().equals("Другой")){
+                        fW.setText("");
+                        fL.setText("");
+                        fH.setText("");
+                        fHc.setText("");
+                        fW.setDisable(false);
+                        fL.setDisable(false);
+                        fH.setDisable(false);
+                        fHc.setDisable(false);
+                    }else {
+                        fW.setText(newValue.getWidth() + "");
+                        fL.setText(newValue.getLength() + "");
+                        fH.setText(newValue.getHeightBottom() + "");
+                        fHc.setText(newValue.getHeightTop() + "");
+                        fW.setDisable(true);
+                        fL.setDisable(true);
+                        fH.setDisable(true);
+                        fHc.setDisable(true);
+                    }
                 }
             }
         });
@@ -102,8 +115,6 @@ public class Controller implements Initializable {
         cbPaper.setValue(paperOS.get(0));
         cbKashirovka.setItems(kashirovkaOS);
         cbKashirovka.setValue(kashirovkaOS.get(0));
-        cbTisnenie.setItems(tisnenieOS);
-        cbTisnenie.setValue(tisnenieOS.get(0));
         cbLamination.setItems(laminationOS);
         cbLamination.setValue(laminationOS.get(0));
 
@@ -198,7 +209,7 @@ public class Controller implements Initializable {
             } else {
                 sizes = cbBox.getValue();
             }
-            Calc calc = new Calc(fName.getText(),Integer.valueOf(fQuantity.getText()),cbConstruction.getValue(),cbTisnenie.getValue(),
+            Calc calc = new Calc(Integer.valueOf(fQuantity.getText()),cbConstruction.getValue(),
                     cbLamination.getValue(),sizes, cbCarton.getValue().getId(),cbPaper.getValue().getId(),cbKashirovka.getValue().getId(),null);
             order = new Order(calc);
         }catch (Exception e){
@@ -227,9 +238,7 @@ public class Controller implements Initializable {
         extraCost.setText("Доп. " + order.extraCost);
         laminationCost.setText("Ламинация" + order.laminationCost);
         ObservableList<PossibleResults> observableListCarton = FXCollections.observableArrayList(order.listTopResult);
-//        ObservableList<PossibleResults<? extends Material>> observableListPaper = FXCollections.observableArrayList(order.listTopResultPaper);
         cartonListView.setItems(observableListCarton);
-//        paperListView.setItems(observableListPaper);
         resultsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -247,14 +256,6 @@ public class Controller implements Initializable {
                 }
             }
         });
-        paperListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getClickCount() == 2){
-                    cutResultStage(paperListView.getSelectionModel().getSelectedItem());
-                }
-            }
-        });
     }
     private void cutResultStage(PossibleResults<? extends Material> possibleResults) {
         GraphicsContext gc;
@@ -265,10 +266,10 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        primaryStage.setTitle(possibleResults.name);
-        primaryStage.setMinWidth(600);
-        primaryStage.setMinHeight(500);
-        primaryStage.setScene(new Scene(root, 600, 500));
+        primaryStage.setTitle(possibleResults.name + " " + possibleResults.material.toString() + " " + possibleResults.quantityMaterial + " шт. ");
+        primaryStage.setMinWidth(750);
+        primaryStage.setMinHeight(450);
+        primaryStage.setScene(new Scene(root, 750, 450));
         Canvas myCanvas = new Canvas(1200, 1000);
         gc = myCanvas.getGraphicsContext2D();
         drawCut(gc,possibleResults);
@@ -299,26 +300,48 @@ public class Controller implements Initializable {
         primaryStage.setScene(new Scene(root, 290, 270));
         primaryStage.show();
     }
-//    public void OnAddConstruction(){
-//        Stage primaryStage = new Stage();
-//        AnchorPane root = null;
-//        try {
-//            root = new FXMLLoader().load(getClass().getResourceAsStream("/fxml/edit_construction.fxml"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        primaryStage.setTitle("Конструкции");
-//        primaryStage.setMinWidth(800);
-//        primaryStage.setMinHeight(900);
-//        primaryStage.setScene(new Scene(root, 800, 900));
-//        primaryStage.show();
-//    }
+
 
     private void drawCut(GraphicsContext gc,PossibleResults<? extends Material> possibleResults){
-        double startLength = 20;
-        double startWidth = 20;
-        int zoom = 5;
+        double startLength = 40;
+        double startWidth = 40;
+        int zoom = 4;
         gc.strokeRect(startLength, startWidth,possibleResults.material.getLength()*zoom,possibleResults.material.getWidth()*zoom);
+        if (possibleResults.needTurnBottom) {
+            gc.strokeText(String.valueOf(possibleResults.part1.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + (possibleResults.part1.getSizes().getLength()*zoom)/2 - 10 ,startWidth - 5 );
+            gc.strokeText(String.valueOf(possibleResults.part1.getSizes().getWidth()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part1.getSizes().getLength()*zoom + 5 ,startWidth + (possibleResults.part1.getSizes().getWidth() * zoom / 2) );
+            gc.strokeRect(startLength + possibleResults.material.getLength()*zoom + 20,startWidth, possibleResults.part1.getSizes().getLength()*zoom, possibleResults.part1.getSizes().getWidth()*zoom );
+        }else {
+            gc.strokeText(String.valueOf(possibleResults.part1.getSizes().getWidth()),startLength + possibleResults.material.getLength()*zoom + 20 + (possibleResults.part1.getSizes().getWidth()*zoom)/2 - 10 ,startWidth - 5 );
+            gc.strokeText(String.valueOf(possibleResults.part1.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part1.getSizes().getWidth()*zoom + 5 ,startWidth + (possibleResults.part1.getSizes().getLength() * zoom / 2) );
+            gc.strokeRect(startLength + possibleResults.material.getLength()*zoom + 20,startWidth, possibleResults.part1.getSizes().getWidth()*zoom, possibleResults.part1.getSizes().getLength()*zoom );
+
+        }
+        if (possibleResults.part1.getSizes().getLength() != possibleResults.part2.getSizes().getLength() && possibleResults.part1.getSizes().getWidth() != possibleResults.part2.getSizes().getWidth()) {
+            if (possibleResults.belowBottom) {
+                if (!possibleResults.needTurnTop) {
+                    gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getLength()*zoom /2 - 10,startWidth + possibleResults.part1.getSizes().getWidth()*zoom +20 );
+                    gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getWidth()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getLength()*zoom,startWidth + possibleResults.part1.getSizes().getWidth()*zoom +20 + possibleResults.part2.getSizes().getWidth()*zoom /2);
+                    gc.strokeRect(startLength + possibleResults.material.getLength()*zoom + 20, startWidth + possibleResults.part1.getSizes().getWidth()*zoom +20, possibleResults.part2.getSizes().getLength()*zoom, possibleResults.part2.getSizes().getWidth()*zoom );
+                } else {
+                    gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getWidth()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getWidth()*zoom /2 - 10,startWidth + possibleResults.part1.getSizes().getLength()*zoom +25 );
+                    gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getWidth()*zoom,startWidth + possibleResults.part1.getSizes().getLength()*zoom +20 + possibleResults.part2.getSizes().getLength()*zoom /2);
+                    gc.strokeRect(startLength + possibleResults.material.getLength()*zoom + 20, startWidth + possibleResults.part1.getSizes().getLength()*zoom +30, possibleResults.part2.getSizes().getWidth()*zoom, possibleResults.part2.getSizes().getLength()*zoom );
+
+                }
+            }else {
+                if (possibleResults.needTurnTop) {
+                    gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getLength()*zoom /2 - 10,startWidth + possibleResults.part1.getSizes().getWidth()*zoom +20 );
+                    gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getWidth()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getLength()*zoom,startWidth + possibleResults.part1.getSizes().getWidth()*zoom +20 + possibleResults.part2.getSizes().getWidth()*zoom /2);
+                    gc.strokeRect(startLength + possibleResults.material.getLength()*zoom + 20, startWidth + possibleResults.part1.getSizes().getWidth()*zoom +20, possibleResults.part2.getSizes().getLength()*zoom, possibleResults.part2.getSizes().getWidth()*zoom );
+                } else {
+                    gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getWidth()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getWidth()*zoom /2 - 10,startWidth + possibleResults.part1.getSizes().getLength()*zoom +25 );
+                    gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getWidth()*zoom,startWidth + possibleResults.part1.getSizes().getLength()*zoom +20 + possibleResults.part2.getSizes().getLength()*zoom /2);
+                    gc.strokeRect(startLength + possibleResults.material.getLength()*zoom + 20, startWidth + possibleResults.part1.getSizes().getLength()*zoom +30, possibleResults.part2.getSizes().getWidth()*zoom, possibleResults.part2.getSizes().getLength()*zoom );
+
+                }
+            }
+        }
         if (possibleResults.needTurnBottom){
             for (int i = 0;i <possibleResults.qbw;i++){
                 for (int j = 0;j < possibleResults.qbl;j++){

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="856.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.com.eliteupakovka.EMController">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <left>
+            <VBox prefHeight="677.0" prefWidth="467.0" BorderPane.alignment="CENTER">
+               <children>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.0" minWidth="10.0" prefWidth="177.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="10.0" prefWidth="250.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" top="20.0" />
+                     </VBox.margin>
+                     <children>
+                        <ComboBox fx:id="cbMaterialType" prefHeight="31.0" prefWidth="167.0" />
+                        <ComboBox fx:id="cbMaterial" prefHeight="31.0" prefWidth="243.0" GridPane.columnIndex="1" />
+                        <TextField fx:id="tfMaterialName" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Ширина,мм" visible="false" GridPane.rowIndex="3" />
+                        <TextField fx:id="tfThickness" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="chbDesing" mnemonicParsing="false" text="дизайнерский" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="244.0" text="Изменить/добавить материал" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="Название иатериала" visible="false" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="207.0" minWidth="10.0" prefWidth="179.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="248.0" minWidth="10.0" prefWidth="248.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" top="50.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label text="Ширина,см" />
+                        <Label text="Длинна,см" GridPane.rowIndex="1" />
+                        <Label text="Стоимость,грн" GridPane.rowIndex="2" />
+                        <Button mnemonicParsing="false" onAction="#bindSize" prefHeight="31.0" prefWidth="239.0" text="Изменить/добавить размер" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <TextField fx:id="tfWidth" GridPane.columnIndex="1" />
+                        <TextField fx:id="tfLength" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="tfCost" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="cgbEnable" mnemonicParsing="false" text="доступен" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Button mnemonicParsing="false" onAction="#deleteMaterialSize" text="Удалить размер" GridPane.rowIndex="4" />
+                     </children>
+                  </GridPane>
+               </children>
+            </VBox>
+         </left>
+         <center>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ListView fx:id="lvMaterialSizes" prefHeight="373.0" prefWidth="389.0" />
+               </children>
+            </VBox>
+         </center></BorderPane>
+   </children>
+</AnchorPane>

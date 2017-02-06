@@ -1,7 +1,7 @@
 package ua.com.eliteupakovka.conctruction;
 
 
-public class ConstructionSize {
+public class ConstructionPartSize {
     private int id;
     private int idSize;
     private int idConstruction;
@@ -9,7 +9,7 @@ public class ConstructionSize {
     private double ws;
     private double wd;
 
-    public ConstructionSize(int id, int idSize, int idConstruction, int idConstructionPart, double ws, double wd) {
+    public ConstructionPartSize(int id, int idSize, int idConstruction, int idConstructionPart, double ws, double wd) {
         this.id = id;
         this.idSize = idSize;
         this.idConstruction = idConstruction;

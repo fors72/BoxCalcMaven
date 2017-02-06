@@ -4,7 +4,6 @@ package ua.com.eliteupakovka;
 import ua.com.eliteupakovka.conctruction.*;
 import ua.com.eliteupakovka.material.Material;
 import ua.com.eliteupakovka.material.MaterialType;
-import ua.com.eliteupakovka.material.Paper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class CalcLab {
         if (type.equals("кашировка")){
             type = "бумага";
         }else if (type.equals("другое")){
-            type = "пластик' OR type='магнит' OR type='лента' OR type='люверс' OR type='шнур";
+            type = "пластик' OR type='магнит' OR type='лента' OR type='люверс' OR type='шнур' OR type='тубус' OR type='флок";
         }
         try {
             resSet = connect("SELECT * FROM materialType WHERE type='" + type + "'");
@@ -63,7 +62,7 @@ public class CalcLab {
         List<Sizes> sizesList = new ArrayList<>();
         try {
             resSet = connect("SELECT * FROM sizes");
-            sizesList.add(new Sizes(0,0,0,0,0));
+//            sizesList.add(new Sizes(0,0,0,0,0));
             while(resSet.next())
             {
               sizesList.add(new Sizes(resSet.getInt("id"),resSet.getDouble("width"),resSet.getDouble("length"),resSet.getDouble("heightBottom"),resSet.getDouble("heightTop")));
@@ -88,7 +87,8 @@ public class CalcLab {
                 double width = resSet.getDouble("width");
                 double length = resSet.getDouble("length");
                 double cost = resSet.getDouble("cost");
-                materialList.add((T) new Material(id,name,width,length,cost));
+                int enable = resSet.getInt("enable");
+                materialList.add((T) new Material(id,name,width,length,cost,enable));
             }
             resultSet.close();
             close();
@@ -103,7 +103,7 @@ public class CalcLab {
             resSet = connect("SELECT * FROM construction");
             while(resSet.next())
             {
-                constructionList.add(new DynamicConstruction(resSet.getString("name"),resSet.getInt("id"),new WorkCost(resSet.getDouble("workcosts"),resSet.getDouble("workcostd"))));
+                constructionList.add(new DynamicConstruction(resSet.getString("name"),resSet.getInt("id"),null));
 
             }
             close();
@@ -119,9 +119,9 @@ public class CalcLab {
         List<ConstructionPart> constructionParts = new ArrayList<>();
         try {
             ResultSet  resultSizeFor = connection.createStatement().executeQuery("SELECT * FROM sizeFor WHERE idConstruction=" + id + " AND idSize=" + sizeBox.getId()) ;
-            List<ConstructionSize> constructionSizes = new ArrayList<>();
+            List<ConstructionPartSize> constructionPartSizes = new ArrayList<>();
             while (resultSizeFor.next()){
-                constructionSizes.add(new ConstructionSize(resultSizeFor.getInt("id"),
+                constructionPartSizes.add(new ConstructionPartSize(resultSizeFor.getInt("id"),
                         resultSizeFor.getInt("idSize"),
                         resultSizeFor.getInt("idConstruction"),
                         resultSizeFor.getInt("idConstructionPart"),
@@ -133,7 +133,7 @@ public class CalcLab {
             while(resSet.next())
             {
                 WorkCost workCost = new WorkCost(resSet.getDouble("ws"),resSet.getDouble("wd"));
-                for (ConstructionSize cs: constructionSizes){
+                for (ConstructionPartSize cs: constructionPartSizes){
                     if (cs.getIdConstructionPart() == resSet.getInt("id")){
                         workCost.setSimple(cs.getWs());
                         workCost.setDesign(cs.getWd());
@@ -167,7 +167,7 @@ public class CalcLab {
         return constructionParts;
     }
     private Sizes getSizeForPart(Sizes sizeBox,Parameters parameters){
-        Sizes sizesPart = new Sizes(sizeBox.getWidth() * parameters.getWidthMulti() +
+        return new Sizes(sizeBox.getWidth() * parameters.getWidthMulti() +
                         sizeBox.getHeightBottom() * parameters.getHeightBottomMulti() * 2 +
                         sizeBox.getHeightBottom() * parameters.getHeightBottomMultiByWidth() +
                         sizeBox.getHeightTop() * parameters.getHeightTopMulti() * 2 +
@@ -186,7 +186,7 @@ public class CalcLab {
                         parameters.getHeightTopAdd() +
                         parameters.getTolerance());
 
-        return sizesPart;
+
     }
 
     public boolean updateConstructionPart(ConstructionPart part){
@@ -274,6 +274,142 @@ public class CalcLab {
         return status;
     }
 
+    public boolean insertConstruction(String name){
+        boolean status = false;
+        try {
+            statmt = connection.createStatement();
+            status = statmt.execute("INSERT INTO construction(name) VALUES ('" + name + "')");
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+    public boolean deleteConstructionById(int id){
+        boolean statusP = false;
+        boolean statusC = false;
+        Statement deletePartStatment = null;
+        Statement deleteConstructionStatment = null;
+        try {
+            deletePartStatment = connection.createStatement();
+            deleteConstructionStatment = connection.createStatement();
+            connection.setAutoCommit(false);
+            statusP = deletePartStatment.execute("DELETE FROM constructionPart WHERE idConstruction =" + id);
+            statusC = deleteConstructionStatment.execute("DELETE FROM construction WHERE id =" + id);
+            connection.commit();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+            if (deleteConstructionStatment != null){
+                deleteConstructionStatment.close();
+            }
+            if (deletePartStatment != null){
+                deletePartStatment.close();
+            }
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return statusP && statusC;
+    }
+
+    public void insertMaterialSize(Material material){
+        int enable = material.isEnable() ? 1 : 0;
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("INSERT INTO materialSize(idType,width,length,cost,enable) VALUES (" + material.getIdMaterial() +
+                    ", " + material.getWidth() +
+                    ", " + material.getLength() +
+                    ", " + material.getCost() +
+                    ", " + enable +
+                    ")");
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateMaterialSize(Material material){
+        int enable = material.isEnable() ? 1 : 0;
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("UPDATE materialSize SET idType=" + material.getIdMaterial() +
+                    ", width= " + material.getWidth() +
+                    ", length=" + material.getLength() +
+                    ", cost=" + material.getCost() +
+                    ", enable=" + enable +
+                    " WHERE id = " + material.getId());
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean deleteMaterialSizeById(int id){
+        boolean status = false;
+        try {
+            statmt = connection.createStatement();
+            status = statmt.execute("DELETE FROM materialSize WHERE id =" + id);
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+    public List<List<DynamicConstruction>> getConstructionListWithSizebySizeId(int id){
+        List<DynamicConstruction> dynamicConstructions = this.getConstructionList();
+        List<List<DynamicConstruction>> listList = new ArrayList<>();
+        try {
+            ResultSet  resultSizeFor = connection.createStatement().executeQuery("SELECT * FROM constructionSize WHERE idSize=" + id) ;
+            List<DynamicConstruction> constructionThatHaveSize = new ArrayList<>();
+            List<DynamicConstruction> constructionThatNotHaveSize = new ArrayList<>();
+            while (resultSizeFor.next()){
+                int cId = resultSizeFor.getInt("idConstruction");
+                for (int i = 0;i<dynamicConstructions.size();i++){
+                    if (dynamicConstructions.get(i).getId() == cId){
+                        constructionThatHaveSize.add(dynamicConstructions.remove(i));
+                        break;
+                    }
+                }
+
+            }
+            constructionThatNotHaveSize.addAll(dynamicConstructions);
+            listList.add(constructionThatHaveSize);
+            listList.add(constructionThatNotHaveSize);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listList;
+
+    }
+
+    public void insertSizeForConstruction(int idConstruction,int idSize){
+
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("INSERT INTO constructionSize(idConstruction,idSize) VALUES (" + idConstruction +
+                    ", " + idSize +
+                    ")");
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSizeForConstruction(int idConstruction,int idSize){
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("DELETE FROM constructionSize WHERE idConstruction =" + idConstruction + " AND idSize =" +idSize);
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private ResultSet connect(String sql) throws SQLException{
         statmt = connection.createStatement();
         return statmt.executeQuery(sql);
@@ -305,15 +441,87 @@ public class CalcLab {
         }
         return is;
     }
-//    private void close(ResultSet resSet,Statement statmt,Connection connection){
-//        try {
-//            resSet.close();
-//            if (statmt != null) {
-//                statmt.close();
-//            }
-//            connection.close();
-//        } catch (SQLException e) {
-//
-//        }
-//    }
+
+    public void insertSize(Sizes sizes) {
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("INSERT INTO sizes(width,length,heightBottom,heightTop,name) VALUES (" + sizes.getWidth() +
+                    ", " + sizes.getLength() +
+                    ", " + sizes.getHeightBottom() +
+                    ", " + sizes.getHeightTop() +
+                    ", '" + sizes.getName() +
+                    "')");
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public List<Sizes> getSizeListByConstructionId(int id) {
+        List<Sizes> sizes = new ArrayList<>();
+        try {
+            statmt = connection.createStatement();
+            resSet = statmt.executeQuery("SELECT * FROM constructionSize WHERE idConstruction =" + id);
+            while (resSet.next()){
+                ResultSet res = connection.createStatement().executeQuery("SELECT * FROM sizes WHERE id=" + resSet.getInt("id"));
+                while (res.next()){
+                    sizes.add(new Sizes(res.getInt("id"),
+                            res.getDouble("width"),
+                            res.getDouble("length"),
+                            res.getDouble("heightBottom"),
+                            res.getDouble("heightTop")));
+                }
+                res.close();
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sizes;
+    }
+
+    public ConstructionPartSize getConstructionPartSizeByThisId(int idPrt,int idSize) {
+        ConstructionPartSize constructionPartSize = new ConstructionPartSize(0,0,0,0,0,0);
+        try {
+            statmt = connection.createStatement();
+            resSet = statmt.executeQuery("SELECT * FROM sizeFor WHERE idConstructionPart =" + idPrt + " AND idSize = " + idSize);
+            while (resSet.next()){
+                constructionPartSize = new ConstructionPartSize(resSet.getInt("id"),idSize,resSet.getInt("idConstruction"),idPrt,
+                        resSet.getDouble("ws"),resSet.getDouble("wd"));
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return constructionPartSize;
+
+    }
+
+    public void insertConstructionPartSize(ConstructionPartSize constructionPartSize){
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("INSERT INTO sizeFor(idSize,idConstructionPart,ws,wd,idConstruction) VALUES (" + constructionPartSize.getIdSize() +
+                    ", " + constructionPartSize.getIdConstructionPart() +
+                    ", " + constructionPartSize.getWs() +
+                    ", " + constructionPartSize.getWd() +
+                    ", " + constructionPartSize.getIdConstruction() +
+                    ")");
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteConstructionPartSize(int id){
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("DELETE FROM sizeFor WHERE id =" + id);
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

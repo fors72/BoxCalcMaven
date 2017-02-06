@@ -10,7 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = new FXMLLoader().load(getClass().getResourceAsStream("/fxml/edit_construction.fxml"));
+        Parent root = new FXMLLoader().load(getClass().getResourceAsStream("/fxml/sample.fxml"));
         primaryStage.setTitle("BoxCalc");
         primaryStage.setMinWidth(798);
         primaryStage.setMinHeight(680);
