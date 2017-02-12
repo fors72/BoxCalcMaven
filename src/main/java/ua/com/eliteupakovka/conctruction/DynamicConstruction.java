@@ -45,6 +45,30 @@ public class DynamicConstruction {
 
             }
         }
+        List<ConstructionPart> bufferCP = new ArrayList<>();
+
+        start: for (int i = 0;i < parts.size();i++){
+            if (parts.get(i).getIdGroup() != 0){
+                if (bufferCP.size() == 0){
+                    bufferCP.add(parts.remove(i));
+                    i--;
+                }else {
+                    for (int j = 0;j < bufferCP.size();j++){
+                        if (parts.get(i).getIdGroup() == bufferCP.get(j).getIdGroup()){
+                            bufferCP.get(j).addChildConstructionParts(parts.remove(i));
+                            i--;
+                            continue start;
+                        }
+                    }
+                    bufferCP.add(parts.remove(i));
+                    i--;
+                }
+            }
+        }
+        for (ConstructionPart cp: bufferCP){
+            cp.initParentPart();
+        }
+        parts.addAll(bufferCP);
         this.parts = parts;
         initListTopResult(parts);
 
@@ -119,19 +143,20 @@ public class DynamicConstruction {
         }else {
             name = part1.getName() + " " + "+" + " " + part2.getName();
         }
-        //TODO:connect to db and get list available materials
         List<PossibleResults>resultsList = new ArrayList<>();
         for (T mt:materialSelectList){
-            try {
+            if (mt.isEnable()) {
+                try {
 
-                if (materialSelectList.get(0).getName().equals("магнит") || materialSelectList.get(0).getName().equals("лента") || materialSelectList.get(0).getName().equals("шнур") || materialSelectList.get(0).getName().equals("люверс")) {
-                    resultsList.add(new PossibleResults(part1,mt));
+                    if (materialSelectList.get(0).getName().equals("магнит") || materialSelectList.get(0).getName().equals("лента") || materialSelectList.get(0).getName().equals("шнур") || materialSelectList.get(0).getName().equals("люверс") || materialSelectList.get(0).getName().equals("тубус") || materialSelectList.get(0).getName().equals("флок")) {
+                        resultsList.add(new PossibleResults(part1,mt));
 
-                } else {
-                    resultsList.add(new PossibleResults<>(mt,part1,part2, name));
+                    } else {
+                        resultsList.add(new PossibleResults<>(mt,part1,part2, name));
+                    }
+                } catch (AnotherTypeExeption anotherTypeExeption) {
+                    anotherTypeExeption.printStackTrace();
                 }
-            } catch (AnotherTypeExeption anotherTypeExeption) {
-                anotherTypeExeption.printStackTrace();
             }
         }
         return resultsList;

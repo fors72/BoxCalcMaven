@@ -3,6 +3,9 @@ package ua.com.eliteupakovka.conctruction;
 
 import ua.com.eliteupakovka.Parameters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConstructionPart {
     private int id;
     private int constrId;
@@ -17,8 +20,11 @@ public class ConstructionPart {
     private boolean laminable;
     private WorkCost workCost;
     private Parameters parameters;
+    private List<ConstructionPart> childConstructionParts;
+    private int idGroup;
+    private boolean parentPart;
 
-    public ConstructionPart(int id, int constrId, int materialTypeId, String name, String type, String dependType, Sizes sizes, int quantity, boolean pressing, boolean laminable, WorkCost workCost, Parameters parameters) {
+    public ConstructionPart(int id, int constrId, int materialTypeId, String name, String type, String dependType, Sizes sizes, int quantity, boolean pressing, boolean laminable, WorkCost workCost, Parameters parameters,int idGroup) {
         this.id = id;
         this.constrId = constrId;
         this.materialTypeId = materialTypeId;
@@ -32,10 +38,55 @@ public class ConstructionPart {
         this.laminable = laminable;
         this.workCost = workCost;
         this.parameters = parameters;
+        this.idGroup = idGroup;
+    }
+
+
+    public void initParentPart(){
+        parentPart = true;
+
+        for (int i = 0;i < childConstructionParts.size();i++){
+            if (idGroup > 0) {
+                sizes.setWidth(sizes.getWidth() + childConstructionParts.get(i).getSizes().getWidth());
+            }else if (idGroup < 0) {
+                sizes.setLength(sizes.getLength() + childConstructionParts.get(i).getSizes().getLength());
+            }
+        }
+
+    }
+    public Sizes getOwnSize(){
+        Sizes size = sizes.clone();
+        for (int i = 0 ;i < childConstructionParts.size();i++){
+            if (idGroup > 0){
+                size.setWidth(size.getWidth() - childConstructionParts.get(i).getSizes().getWidth());
+            }else if (idGroup < 0){
+                size.setLength(size.getLength() - childConstructionParts.get(i).getSizes().getLength());
+            }
+        }
+        return size;
     }
 
     public int getId() {
         return id;
+    }
+
+    public void addChildConstructionParts(ConstructionPart childConstructionPart) {
+        if (childConstructionParts == null){
+            childConstructionParts = new ArrayList<>();
+        }
+        childConstructionParts.add(childConstructionPart);
+    }
+
+    public List<ConstructionPart> getChildConstructionParts() {
+        return childConstructionParts;
+    }
+
+    public int getIdGroup() {
+        return idGroup;
+    }
+
+    public boolean isParentPart() {
+        return parentPart;
     }
 
     public int getConstrId() {

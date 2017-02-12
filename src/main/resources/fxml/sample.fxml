@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -8,11 +9,12 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="318.0" minWidth="798.0" onKeyPressed="#buttonPressed" prefHeight="751.0" prefWidth="982.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.com.eliteupakovka.Controller">
    <left>
-      <GridPane maxHeight="311.0" maxWidth="394.0" prefHeight="311.0" prefWidth="394.0" BorderPane.alignment="CENTER">
+      <GridPane maxHeight="311.0" maxWidth="585.0" prefHeight="311.0" prefWidth="585.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="142.0" minWidth="10.0" prefWidth="78.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="212.0" minWidth="10.0" prefWidth="172.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.0" minWidth="43.0" prefWidth="108.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.0" minWidth="43.0" prefWidth="58.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="198.0" minWidth="43.0" prefWidth="197.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -38,27 +40,27 @@
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin></Label>
-            <TextField fx:id="fW" promptText="Ширина" text="31.8" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <TextField fx:id="fW" promptText="Ширина" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="fL" promptText="Длинна" text="28.5" GridPane.columnIndex="2" GridPane.rowIndex="2">
+            <TextField fx:id="fL" promptText="Длинна" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="fH" promptText="Высота(Д)" text="10.5" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <TextField fx:id="fH" promptText="Высота(Д)" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="fHc" promptText="Высота(К)" text="3" GridPane.columnIndex="2" GridPane.rowIndex="4">
+            <TextField fx:id="fHc" promptText="Высота(К)" GridPane.columnIndex="2" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="fQuantity" text="100" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <TextField fx:id="fQuantity" prefHeight="31.0" prefWidth="96.0" text="100" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <TextField fx:id="sC1" promptText="Ширина" GridPane.columnIndex="2" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
@@ -81,31 +83,23 @@
             <ComboBox fx:id="cbKashirovka" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <ComboBox fx:id="cbLamination" prefHeight="31.0" prefWidth="190.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Button mnemonicParsing="false" onAction="#OnCalc" prefHeight="25.0" prefWidth="170.0" text="Просчет" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-            <Button mnemonicParsing="false" onAction="#CalcPressKnife" text="штампы" GridPane.columnIndex="2" GridPane.rowIndex="5">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin></Button>
             <Button mnemonicParsing="false" onAction="#CalcCliche" prefHeight="31.0" prefWidth="80.0" text="клише" GridPane.columnIndex="2" GridPane.rowIndex="9">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin></Button>
+            <Button mnemonicParsing="false" onAction="#OnAdd" text="Рдактор" GridPane.rowIndex="9" />
+            <Label fx:id="k1" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label fx:id="k2" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Label fx:id="k3" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Label fx:id="k4" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Label text="Штампы к+д" GridPane.columnIndex="3" />
+            <Label fx:id="k5" GridPane.columnIndex="3" GridPane.rowIndex="5" />
          </children>
          <BorderPane.margin>
             <Insets left="10.0" />
          </BorderPane.margin>
       </GridPane>
    </left>
-   <center>
-      <VBox prefHeight="325.0" prefWidth="463.0" BorderPane.alignment="CENTER">
-         <children>
-            <ListView fx:id="resultsListView">
-               <VBox.margin>
-                  <Insets right="10.0" />
-               </VBox.margin></ListView>
-            <Button mnemonicParsing="false" onAction="#OnAdd" text="Рдактор" />
-         </children>
-      </VBox>
-   </center>
    <bottom>
       <TabPane prefHeight="332.0" prefWidth="834.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -115,65 +109,67 @@
                      <children>
                         <HBox layoutX="30.0" layoutY="5.0">
                            <children>
-                              <VBox layoutX="4.0" layoutY="14.0" prefHeight="200.0" prefWidth="168.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="5.0">
+                              <VBox layoutX="4.0" layoutY="14.0" prefHeight="200.0" prefWidth="208.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="5.0">
                                  <children>
-                                    <Label fx:id="prise" text="Label" />
-                                    <Label fx:id="cost" text="Label" />
+                                    <Label fx:id="prise" text="Цена" />
+                                    <Label fx:id="cost" text="Стоимость" />
+                                    <Label fx:id="prisePer1" text="Цена за шт." />
+                                    <Label fx:id="costPer1" text="Стоимость за шт." />
                                  </children>
                               </VBox>
-                              <VBox prefHeight="200.0" prefWidth="143.0">
+                              <VBox prefHeight="200.0" prefWidth="136.0">
                                  <children>
-                                    <Label fx:id="cartonCost" text="Label">
+                                    <Label fx:id="cartonCost" text="Картон">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="paperCost" text="Label">
+                                    <Label fx:id="paperCost" text="Бумага">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="tapeCost" text="Label">
+                                    <Label fx:id="tapeCost" text="Скотч">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="glueCost" text="Label">
+                                    <Label fx:id="glueCost" text="Клей">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="workCost" text="Label">
+                                    <Label fx:id="workCost" text="Работа">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="cuttingCost" text="Label">
+                                    <Label fx:id="cuttingCost" text="Порезка">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="pressinCost" text="Label">
+                                    <Label fx:id="pressinCost" text="Высечка">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="rentCost" text="Label">
+                                    <Label fx:id="rentCost" text="Оренда">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="stretchCost" text="Label">
+                                    <Label fx:id="stretchCost" text="Стрейч">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="extraCost" text="Label">
+                                    <Label fx:id="extraCost" text="Доп">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="laminationCost" text="Label">
+                                    <Label fx:id="laminationCost" text="Ламинация">
                                        <font>
                                           <Font size="12.0" />
                                        </font>
@@ -189,11 +185,16 @@
                <content>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <AnchorPane prefHeight="293.0" prefWidth="839.0">
+                        <AnchorPane prefHeight="293.0" prefWidth="584.0">
                            <children>
-                              <ListView fx:id="cartonListView" prefHeight="283.0" prefWidth="964.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                              <ListView fx:id="cartonListView" prefHeight="283.0" prefWidth="572.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
                            </children>
                         </AnchorPane>
+                        <Button mnemonicParsing="false" onAction="#createPDF" prefHeight="31.0" prefWidth="143.0" text="сохранить в PDF">
+                           <HBox.margin>
+                              <Insets left="20.0" top="20.0" />
+                           </HBox.margin>
+                        </Button>
                      </children>
                   </HBox>
                </content>

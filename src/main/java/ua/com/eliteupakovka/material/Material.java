@@ -9,6 +9,7 @@ public class Material {
     private double length;
     private double cost;
     private boolean enable;
+    private double thickness;
 
     public Material(int id, String name, double width, double length, double cost) {
         this.id = id;
@@ -18,13 +19,14 @@ public class Material {
         this.cost = cost;
         this.enable = true;
     }
-    public Material(int id, String name, double width, double length, double cost,int enable) {
+    public Material(int id, String name, double width, double length, double cost,int enable,double thickness) {
         this.id = id;
         this.name = name;
         this.width = width;
         this.length = length;
         this.cost = cost;
         this.enable = enable == 1;
+        this.thickness = thickness;
     }
 
     public Material(String name, int id, int idMaterial, double width, double length, double cost, boolean enable) {
@@ -36,6 +38,7 @@ public class Material {
         this.cost = cost;
         this.enable = enable;
     }
+
 
     public String getName() {
         return name;
@@ -96,7 +99,11 @@ public class Material {
     @Override
     public String toString() {
         if (width != 0 && length != 0) {
-            return name + " " + width + "x" + length;
+            if (thickness > 0) {
+                return name + " " + thickness + "мм. " + width + "x" + length;
+            }else {
+                return name + " " + width + "x" + length;
+            }
         } else {
             return name;
         }

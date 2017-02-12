@@ -59,7 +59,7 @@ public class ESController implements Initializable {
             ivConstructionWithoutSize.setValue(dynamicConstructionsThatNotHave.get(0));
         }
         Sizes sizes = lvSize.getSelectionModel().getSelectedItem();
-        tfName.setText("name");
+        tfName.setText(sizes.getName());
         tfWidth.setText(String.valueOf(sizes.getWidth()));
         tfLength.setText(String.valueOf(sizes.getLength()));
         tfHeightBottom.setText(String.valueOf(sizes.getHeightBottom()));
@@ -87,9 +87,27 @@ public class ESController implements Initializable {
                     Double.valueOf(tfHeightTop.getText()),
                     tfName.getText()
                     ));
-            ObservableList<Sizes> sizes = FXCollections.observableArrayList(calcLab.getSizesList());
-            sizes.add(new Sizes(0,0,0,0,0));
-            lvSize.setItems(sizes);
+
+        }else {
+            calcLab.updateSize(new Sizes(lvSize.getSelectionModel().getSelectedItem().getId(),
+                    Double.valueOf(tfWidth.getText()),
+                    Double.valueOf(tfLength.getText()),
+                    Double.valueOf(tfHeightBottom.getText()),
+                    Double.valueOf(tfHeightTop.getText()),
+                    tfName.getText()
+            ));
         }
+        updateUIsize();
+    }
+    public void deleteSize(){
+        calcLab.deleteSize(lvSize.getSelectionModel().getSelectedItem().getId());
+        updateUIsize();
+        lvSize.getSelectionModel().select(0);
+    }
+
+    private void updateUIsize(){
+        ObservableList<Sizes> sizes = FXCollections.observableArrayList(calcLab.getSizesList());
+        sizes.add(new Sizes(0,0,0,0,0));
+        lvSize.setItems(sizes);
     }
 }

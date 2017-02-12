@@ -44,7 +44,7 @@ public class PossibleResults<T extends Material> {
     }
     public PossibleResults(T material, ConstructionPart part1, ConstructionPart part2, String name) throws AnotherTypeExeption {
         if (part1.getMaterialTypeId() != part2.getMaterialTypeId()){
-            throw new AnotherTypeExeption("sd");
+            throw new AnotherTypeExeption("material part 1 != material part 2");
         }
         this.material = material;
         this.part1 = part1;
@@ -193,18 +193,23 @@ public class PossibleResults<T extends Material> {
     }
 
     public PossibleResults(ConstructionPart part1, T material) {
-        if (part1.getName().equals("Магнит")){
+        if (part1.getType().equals("магнит")){
             int multi = 2;
-            if (part1.getSizes().getLength() > 20.0){
+            if (part1.getSizes().getLength() > 20.0 && part1.getConstrId() != 20){
+                multi *= 2;
+            }
+            if (part1.getConstrId() == 20){
                 multi *= 2;
             }
             quantityMaterial = part1.getQuantity() * multi;
-        }else if (part1.getName().equals("Лента")){
+        }else if (part1.getType().equals("лента")){
             quantityMaterial = part1.getQuantity() * 2;
-        }else if (part1.getName().equals("Шнур")){
+        }else if (part1.getType().equals("шнур")){
             quantityMaterial = part1.getQuantity();
-        }else if (part1.getName().equals("Люверс")){
+        }else if (part1.getType().equals("люверс")){
             quantityMaterial = part1.getQuantity() * 4;
+        }else {
+            quantityMaterial = part1.getQuantity();
         }
         this.material = material;
         this.name = part1.getName();

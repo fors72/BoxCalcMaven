@@ -65,7 +65,7 @@ public class CalcLab {
 //            sizesList.add(new Sizes(0,0,0,0,0));
             while(resSet.next())
             {
-              sizesList.add(new Sizes(resSet.getInt("id"),resSet.getDouble("width"),resSet.getDouble("length"),resSet.getDouble("heightBottom"),resSet.getDouble("heightTop")));
+              sizesList.add(new Sizes(resSet.getInt("id"),resSet.getDouble("width"),resSet.getDouble("length"),resSet.getDouble("heightBottom"),resSet.getDouble("heightTop"),resSet.getString("name")));
             }
             close();
         } catch (SQLException e) {
@@ -81,6 +81,7 @@ public class CalcLab {
             resSet = connect("SELECT * FROM materialSize WHERE idType=" + idType);
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM materialType WHERE id=" + idType);
             String name = resultSet.getString("name");
+            double thickness = resultSet.getDouble("thicness");
             while(resSet.next())
             {
                 int id = resSet.getInt("id");
@@ -88,7 +89,7 @@ public class CalcLab {
                 double length = resSet.getDouble("length");
                 double cost = resSet.getDouble("cost");
                 int enable = resSet.getInt("enable");
-                materialList.add((T) new Material(id,name,width,length,cost,enable));
+                materialList.add((T) new Material(id,name,width,length,cost,enable,thickness));
             }
             resultSet.close();
             close();
@@ -140,7 +141,7 @@ public class CalcLab {
                     }
                 }
                 Parameters param = new Parameters(resSet.getDouble("tolerance"),resSet.getDouble("widthMulti"),resSet.getDouble("widthAdd"),resSet.getDouble("lengthMulti"),resSet.getDouble("lengthAdd"),resSet.getDouble("heightBottomMulti"),resSet.getDouble("heightBottomAdd"),resSet.getDouble("heightTopMulti"),resSet.getDouble("heightTopAdd"),resSet.getDouble("heightBottomMultiByWidth"),resSet.getDouble("heightBottomMultiByLength"),resSet.getDouble("heightTopMultiByWidth"),resSet.getDouble("heightTopMultiByLength"));
-                constructionParts.add(new ConstructionPart(resSet.getInt("id"),id,resSet.getInt("material"),resSet.getString("name"),resSet.getString("type"),"delete this field",getSizeForPart(sizeBox,param),quantity,1 == resSet.getInt("pressing"),1 == resSet.getInt("laminable"),workCost,null));
+                constructionParts.add(new ConstructionPart(resSet.getInt("id"),id,resSet.getInt("material"),resSet.getString("name"),resSet.getString("type"),"delete this field",getSizeForPart(sizeBox,param),quantity,1 == resSet.getInt("pressing"),1 == resSet.getInt("laminable"),workCost,null,resSet.getInt("groupPart")));
 
             }
             close();
@@ -158,7 +159,7 @@ public class CalcLab {
             {
 
                 Parameters param = new Parameters(resSet.getDouble("tolerance"),resSet.getDouble("widthMulti"),resSet.getDouble("widthAdd"),resSet.getDouble("lengthMulti"),resSet.getDouble("lengthAdd"),resSet.getDouble("heightBottomMulti"),resSet.getDouble("heightBottomAdd"),resSet.getDouble("heightTopMulti"),resSet.getDouble("heightTopAdd"),resSet.getDouble("heightBottomMultiByWidth"),resSet.getDouble("heightBottomMultiByLength"),resSet.getDouble("heightTopMultiByWidth"),resSet.getDouble("heightTopMultiByLength"));
-                constructionParts.add(new ConstructionPart(resSet.getInt("id"),id,resSet.getInt("material"),resSet.getString("name"),resSet.getString("type"),"dt",null,0,1 == resSet.getInt("pressing"),1 == resSet.getInt("laminable"),new WorkCost(resSet.getDouble("ws"),resSet.getDouble("wd")),param));
+                constructionParts.add(new ConstructionPart(resSet.getInt("id"),id,resSet.getInt("material"),resSet.getString("name"),resSet.getString("type"),"dt",null,0,1 == resSet.getInt("pressing"),1 == resSet.getInt("laminable"),new WorkCost(resSet.getDouble("ws"),resSet.getDouble("wd")),param,resSet.getInt("groupPart")));
             }
             close();
         } catch (SQLException e) {
@@ -232,7 +233,7 @@ public class CalcLab {
             int a = part.isPressing() ? 1 : 0;
             int b = part.isLaminable() ? 1 : 0;
             Parameters parameters = part.getParameters();
-            status = statmt.execute("INSERT INTO constructionPart(idConstruction, name, type, material, widthMulti, widthAdd, lengthMulti, lengthAdd, heightBottomMulti, heightBottomAdd, heightTopMulti, heightTopAdd, tolerance, heightBottomMultiByWidth, heightBottomMultiByLength, heightTopMultiByWidth, heightTopMultiByLength, ws, wd, pressing, laminable) " +
+            status = statmt.execute("INSERT INTO constructionPart(idConstruction, name, type, material, widthMulti, widthAdd, lengthMulti, lengthAdd, heightBottomMulti, heightBottomAdd, heightTopMulti, heightTopAdd, tolerance, heightBottomMultiByWidth, heightBottomMultiByLength, heightTopMultiByWidth, heightTopMultiByLength, ws, wd, pressing, laminable,groupPart) " +
                     "VALUES (" + part.getConstrId() +
                     ",'"+ part.getName() +
                     "','"+ part.getType() +
@@ -254,6 +255,7 @@ public class CalcLab {
                     ","+ part.getWorkCost().getWorkCost(true) +
                     ","+ a +
                     ","+ b +
+                    ","+ 0 +
                     ")");
             close();
         } catch (SQLException e) {
@@ -267,6 +269,8 @@ public class CalcLab {
         try {
             statmt = connection.createStatement();
             status = statmt.execute("DELETE FROM constructionPart WHERE id =" + id);
+            statmt = connection.createStatement();
+            status = statmt.execute("DELETE FROM sizeFor WHERE idConstructionPart =" + id);
             close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -290,12 +294,17 @@ public class CalcLab {
         boolean statusC = false;
         Statement deletePartStatment = null;
         Statement deleteConstructionStatment = null;
+        Statement delete = null;
         try {
             deletePartStatment = connection.createStatement();
             deleteConstructionStatment = connection.createStatement();
+            delete = connection.createStatement();
             connection.setAutoCommit(false);
             statusP = deletePartStatment.execute("DELETE FROM constructionPart WHERE idConstruction =" + id);
             statusC = deleteConstructionStatment.execute("DELETE FROM construction WHERE id =" + id);
+            delete.execute("DELETE FROM constructionSize WHERE idConstruction =" + id);
+            delete = connection.createStatement();
+            delete.execute("DELETE FROM sizeFor WHERE idConstruction =" + id);
             connection.commit();
 
         } catch (SQLException e) {
@@ -464,13 +473,14 @@ public class CalcLab {
             statmt = connection.createStatement();
             resSet = statmt.executeQuery("SELECT * FROM constructionSize WHERE idConstruction =" + id);
             while (resSet.next()){
-                ResultSet res = connection.createStatement().executeQuery("SELECT * FROM sizes WHERE id=" + resSet.getInt("id"));
+                ResultSet res = connection.createStatement().executeQuery("SELECT * FROM sizes WHERE id=" + resSet.getInt("idSize"));
                 while (res.next()){
                     sizes.add(new Sizes(res.getInt("id"),
                             res.getDouble("width"),
                             res.getDouble("length"),
                             res.getDouble("heightBottom"),
-                            res.getDouble("heightTop")));
+                            res.getDouble("heightTop"),
+                            res.getString("name")));
                 }
                 res.close();
             }
@@ -519,6 +529,36 @@ public class CalcLab {
         try {
             statmt = connection.createStatement();
             statmt.execute("DELETE FROM sizeFor WHERE id =" + id);
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateSize(Sizes sizes) {
+
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("UPDATE sizes SET heightBottom=" + sizes.getHeightBottom() +
+                    ", width= " + sizes.getWidth() +
+                    ", length=" + sizes.getLength() +
+                    ", heightTop=" + sizes.getHeightTop() +
+                    ", name='" + sizes.getName() +
+                    "' WHERE id = " + sizes.getId());
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSize(int id) {
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("DELETE FROM sizeFor WHERE idSize =" + id);
+            statmt = connection.createStatement();
+            statmt.execute("DELETE FROM sizes WHERE id =" + id);
+            statmt = connection.createStatement();
+            statmt.execute("DELETE FROM constructionSize WHERE idSize =" + id);
             close();
         } catch (SQLException e) {
             e.printStackTrace();

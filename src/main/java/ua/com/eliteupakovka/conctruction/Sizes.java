@@ -1,7 +1,7 @@
 package ua.com.eliteupakovka.conctruction;
 
 
-public class Sizes {
+public class Sizes  implements Cloneable{
     private double width,length,heightBottom,heightTop;
     private int id;
     private String name;
@@ -26,6 +26,15 @@ public class Sizes {
     public Sizes(double width, double length) {
         this.width = width;
         this.length = length;
+    }
+    @Override
+    public Sizes clone() {
+        try {
+            return (Sizes)super.clone();
+        }
+        catch( CloneNotSupportedException ex ) {
+            throw new InternalError();
+        }
     }
 
     //    public Sizes(double diameter, double height) {
@@ -71,7 +80,7 @@ public class Sizes {
         if (width == 0 && length == 0 && heightBottom == 0 & heightTop == 0) {
             return "Другой";
         } else {
-            return width + "x" + length + "x" + heightBottom;
+            return width + "x" + length + "x" + heightBottom + " " + name;
         }
 
     }

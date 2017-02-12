@@ -121,7 +121,7 @@ public class ECController implements Initializable {
 
     public void updateUIConstructionPart(int id){
         ObservableList<ConstructionPart> constructionParts = FXCollections.observableArrayList(calcLab.getConstructionPartListByConstructionId(id));
-        constructionParts.add(new ConstructionPart(0,id,0,"+ добавить деталь","картон","",null,0,false,false,new WorkCost(0,0),new Parameters(0,0,0,0,0,0,0,0,0,0,0,0,0)));
+        constructionParts.add(new ConstructionPart(0,id,0,"+ добавить деталь","картон","",null,0,false,false,new WorkCost(0,0),new Parameters(0,0,0,0,0,0,0,0,0,0,0,0,0),0));
         lvConstructionPart.setItems(constructionParts);
         lvConstructionPart.getSelectionModel().select(0);
         selectPart = lvConstructionPart.getSelectionModel().getSelectedItem();
@@ -181,7 +181,7 @@ public class ECController implements Initializable {
                 Double.valueOf(tfHWTM.getText()),Double.valueOf(tfHLTM.getText()));
         WorkCost workCost = new WorkCost(Double.valueOf(tfWS.getText()),Double.valueOf(tfWD.getText()));
         selectPart.setName(tfPartName.getText());
-        selectPart.setType(cbMaterialType.getValue());
+        selectPart.setType(cbMaterialType.getValue().equals("другое") ? cbMaterial.getValue().getName() : cbMaterialType.getValue());
         selectPart.setMaterialTypeId(cbMaterial.getValue().getId());
         selectPart.setLaminable(chbLaminable.isSelected());
         selectPart.setPressing(chbPressing.isSelected());

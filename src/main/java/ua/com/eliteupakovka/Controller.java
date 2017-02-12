@@ -1,10 +1,16 @@
 package ua.com.eliteupakovka;
 
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,26 +19,31 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ua.com.eliteupakovka.conctruction.DynamicConstruction;
 import ua.com.eliteupakovka.conctruction.Sizes;
 import ua.com.eliteupakovka.material.Material;
 import ua.com.eliteupakovka.material.MaterialType;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 
 public class Controller implements Initializable {
+    private String name;
     private CalcLab calcLab = CalcLab.get();
     @FXML
     ComboBox<String> cbLamination;
@@ -45,11 +56,11 @@ public class Controller implements Initializable {
     @FXML
     TextField fQuantity,fName,fW,fL,fH,fHc,sC1,sC2,toleranceOflengthPaperTop,toleranceOfwidthPaperTop,toleranceOflengthPapeBottomr,toleranceOfwidthPaperBottom,toleranceOflengthCartonTop,toleranceOfwidthCartonTop,toleranceOflengthCartonBottom,toleranceOfwidthCartonBottom,toleranceAll;
     @FXML
-    ListView<PossibleResults> resultsListView,cartonListView,paperListView;
+    ListView<PossibleResults> cartonListView;
     @FXML
     ListView<String> testDb;
     @FXML
-    Label cost,prise,cartonCost,paperCost,tapeCost,glueCost,workCost,cuttingCost,pressinCost,rentCost,stretchCost,extraCost,laminationCost;
+    Label cost,prise,cartonCost,paperCost,tapeCost,glueCost,workCost,cuttingCost,pressinCost,rentCost,stretchCost,extraCost,laminationCost,prisePer1,costPer1,k1,k2,k3,k4,k5;
 
 
 
@@ -118,6 +129,16 @@ public class Controller implements Initializable {
         cbLamination.setItems(laminationOS);
         cbLamination.setValue(laminationOS.get(0));
 
+        ChangeListener<String> calcKnivesListener = new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                CalcPressKnife();
+            }
+        };
+        fW.textProperty().addListener(calcKnivesListener);
+        fL.textProperty().addListener(calcKnivesListener);
+        fH.textProperty().addListener(calcKnivesListener);
+        fHc.textProperty().addListener(calcKnivesListener);
     }
 
     public static void write(String fileName, String text) {
@@ -150,17 +171,17 @@ public class Controller implements Initializable {
         double dobCC;
         double dobPB;
         double dobPC;
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         try {
             dobCB = Double.valueOf(fW.getText());
             dobCC = Double.valueOf(fL.getText());
             dobPB = Double.valueOf(fH.getText());
             dobPC = Double.valueOf(fHc.getText());
         } catch (Exception e) {
-            alert.setTitle("!!!");
-            alert.setContentText("неправельный формат числа");
-            alert.setHeaderText("");
-            alert.showAndWait();
+            k1.setText("");
+            k2.setText("");
+            k3.setText("");
+            k4.setText("");
+            k5.setText("");
             return;
         }
 
@@ -169,14 +190,12 @@ public class Controller implements Initializable {
         int mknivesPB = (int)(((2 * dobCB + 2 * dobCC + 8 * (dobPB + 1.5)) / 100) * 15 * 27);
         int mknivesPC = (int)(((2 * (dobCB + 0.5) + 2 * (dobCC + 0.5) + 8 * (dobPC + 1.5)) / 100) * 15 * 27);
 
-        alert.setTitle("Штампы");
-        alert.setContentText("Кртон дно - " + mknivesCB + " грн" + "\n" +
-                "Кртон крышка - " + mknivesCC + " грн" + "\n" +
-                "Бумага дно - " + mknivesPB + " грн" + "\n" +
-                "Бумага Крышка - " + mknivesPC + " грн" + "\n" +
-                "Сумма - " + (mknivesCB + mknivesCC + mknivesPB + mknivesPC) + " грн"  );
-        alert.setHeaderText("");
-        alert.showAndWait();
+        k1.setText("Картон дно - " + mknivesCB + " грн");
+        k2.setText("Картон крышка - " + mknivesCC + " грн");
+        k3.setText("Бумага дно - " + mknivesPB + " грн");
+        k4.setText("Бумага Крышка - " + mknivesPC + " грн");
+        k5.setText("Сумма - " + (mknivesCB + mknivesCC + mknivesPB + mknivesPC) + " грн");
+
     }
     public void CalcCliche(){
         double dobSC1;
@@ -212,6 +231,7 @@ public class Controller implements Initializable {
             Calc calc = new Calc(Integer.valueOf(fQuantity.getText()),cbConstruction.getValue(),
                     cbLamination.getValue(),sizes, cbCarton.getValue().getId(),cbPaper.getValue().getId(),cbKashirovka.getValue().getId(),null);
             order = new Order(calc);
+            name = cbConstruction.getValue().getName() + " " + sizes.getWidth() + "x" + sizes.getLength() + "x" + sizes.getHeightBottom() + "x" + sizes.getHeightTop();
         }catch (Exception e){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("!!!");
@@ -226,6 +246,8 @@ public class Controller implements Initializable {
 
         prise.setText("Цена - " + String.valueOf((int) order.prise));
         cost.setText("Стоимость - " + String.valueOf((int) order.cost));
+        prisePer1.setText("Цена за шт. " + String.valueOf((int)order.prise/order.quantity));
+        costPer1.setText("Стоимость за шт. " + String.valueOf((int)order.cost/order.quantity));
         cartonCost.setText("Картон " + order.cartonCost);
         paperCost.setText("Бумага " + order.paperCost);
         tapeCost.setText("Скотч " + order.tapeCost);
@@ -239,15 +261,6 @@ public class Controller implements Initializable {
         laminationCost.setText("Ламинация" + order.laminationCost);
         ObservableList<PossibleResults> observableListCarton = FXCollections.observableArrayList(order.listTopResult);
         cartonListView.setItems(observableListCarton);
-        resultsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getClickCount() == 2){
-                    PossibleResults<? extends Material> possibleResults = resultsListView.getSelectionModel().getSelectedItem();
-                    cutResultStage(possibleResults);
-                }
-            }
-        });
         cartonListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -269,12 +282,11 @@ public class Controller implements Initializable {
         primaryStage.setTitle(possibleResults.name + " " + possibleResults.material.toString() + " " + possibleResults.quantityMaterial + " шт. ");
         primaryStage.setMinWidth(750);
         primaryStage.setMinHeight(450);
-        primaryStage.setScene(new Scene(root, 750, 450));
-        Canvas myCanvas = new Canvas(1200, 1000);
+        primaryStage.setScene(new Scene(root, 1000, 600));
+        Canvas myCanvas = new Canvas(1000, 600);
         gc = myCanvas.getGraphicsContext2D();
-        drawCut(gc,possibleResults);
+        drawCut(gc,possibleResults,4);
         root.getChildren().add(myCanvas);
-
         primaryStage.show();
     }
     @FXML
@@ -302,10 +314,11 @@ public class Controller implements Initializable {
     }
 
 
-    private void drawCut(GraphicsContext gc,PossibleResults<? extends Material> possibleResults){
+    private void drawCut(GraphicsContext gc,PossibleResults<? extends Material> possibleResults,int zoom){
+        javafx.scene.text.Font font = new javafx.scene.text.Font(20);
+        gc.setFont(font);
         double startLength = 40;
         double startWidth = 40;
-        int zoom = 4;
         gc.strokeRect(startLength, startWidth,possibleResults.material.getLength()*zoom,possibleResults.material.getWidth()*zoom);
         if (possibleResults.needTurnBottom) {
             gc.strokeText(String.valueOf(possibleResults.part1.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + (possibleResults.part1.getSizes().getLength()*zoom)/2 - 10 ,startWidth - 5 );
@@ -317,7 +330,7 @@ public class Controller implements Initializable {
             gc.strokeRect(startLength + possibleResults.material.getLength()*zoom + 20,startWidth, possibleResults.part1.getSizes().getWidth()*zoom, possibleResults.part1.getSizes().getLength()*zoom );
 
         }
-        if (possibleResults.part1.getSizes().getLength() != possibleResults.part2.getSizes().getLength() && possibleResults.part1.getSizes().getWidth() != possibleResults.part2.getSizes().getWidth()) {
+        if (!possibleResults.part1.equals(possibleResults.part2)) {
             if (possibleResults.belowBottom) {
                 if (!possibleResults.needTurnTop) {
                     gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getLength()*zoom /2 - 10,startWidth + possibleResults.part1.getSizes().getWidth()*zoom +20 );
@@ -339,6 +352,42 @@ public class Controller implements Initializable {
                     gc.strokeText(String.valueOf(possibleResults.part2.getSizes().getLength()),startLength + possibleResults.material.getLength()*zoom + 20 + possibleResults.part2.getSizes().getWidth()*zoom,startWidth + possibleResults.part1.getSizes().getLength()*zoom +20 + possibleResults.part2.getSizes().getLength()*zoom /2);
                     gc.strokeRect(startLength + possibleResults.material.getLength()*zoom + 20, startWidth + possibleResults.part1.getSizes().getLength()*zoom +30, possibleResults.part2.getSizes().getWidth()*zoom, possibleResults.part2.getSizes().getLength()*zoom );
 
+                }
+            }
+        }
+        if (possibleResults.part1.isParentPart()){
+            if (possibleResults.part1.getIdGroup() < 0){
+                String text = possibleResults.part1.getSizes().getLength() + " (" + possibleResults.part1.getOwnSize().getLength();
+                for (int i = 0; i < possibleResults.part1.getChildConstructionParts().size();i++){
+                    text +=", " + possibleResults.part1.getChildConstructionParts().get(i).getSizes().getLength();
+                }
+                text += ")";
+                gc.strokeText(text,startWidth,startWidth + possibleResults.material.getWidth()*zoom + 30 );
+            }else if (possibleResults.part1.getIdGroup() > 0){
+                String text = possibleResults.part1.getSizes().getWidth() + " (" + possibleResults.part1.getOwnSize().getWidth();
+                for (int i = 0; i < possibleResults.part1.getChildConstructionParts().size();i++){
+                    text +=", " + possibleResults.part1.getChildConstructionParts().get(i).getSizes().getWidth();
+                }
+                text += ")";
+                gc.strokeText(text,startWidth,startWidth + possibleResults.material.getWidth()*zoom + 30 );
+            }
+        }
+        if (!possibleResults.part1.equals(possibleResults.part2)) {
+            if (possibleResults.part2.isParentPart()){
+                if (possibleResults.part2.getIdGroup() < 0){
+                    String text = possibleResults.part2.getSizes().getLength() + " (" + possibleResults.part2.getOwnSize().getLength();
+                    for (int i = 0; i < possibleResults.part2.getChildConstructionParts().size();i++){
+                        text +=", " + possibleResults.part2.getChildConstructionParts().get(i).getSizes().getLength();
+                    }
+                    text += ")";
+                    gc.strokeText(text,startWidth,startWidth + possibleResults.material.getWidth()*zoom + 70 );
+                }else if (possibleResults.part2.getIdGroup() > 0){
+                    String text = possibleResults.part2.getSizes().getWidth() + " (" + possibleResults.part2.getOwnSize().getWidth();
+                    for (int i = 0; i < possibleResults.part2.getChildConstructionParts().size();i++){
+                        text +=", " + possibleResults.part2.getChildConstructionParts().get(i).getSizes().getWidth();
+                    }
+                    text += ")";
+                    gc.strokeText(text,startWidth,startWidth + possibleResults.material.getWidth()*zoom + 70 );
                 }
             }
         }
@@ -400,5 +449,82 @@ public class Controller implements Initializable {
                 }
             }
         }
+    }
+
+
+
+
+    public void createPDF(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Сохранить");
+        fileChooser.setInitialFileName(name);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF file(*.pdf)","*.pdf"));
+        try {
+            Document document = new Document();
+            document.setMargins(0,0,0,0);
+            PdfWriter.getInstance(document, new FileOutputStream(fileChooser.showSaveDialog(null)));
+            BaseFont baseFont = BaseFont.createFont("c:/Windows/Fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            Font font = new Font(baseFont, 20, Font.NORMAL);
+            document.open();
+            Paragraph title = new Paragraph(name,font);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            fillPDF(document,baseFont);
+            document.close();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void fillPDF(Document document,BaseFont baseFont) throws DocumentException,IOException{
+        ObservableList<PossibleResults> resultsList = cartonListView.getItems();
+        GraphicsContext gc;
+        Canvas myCanvas;
+        WritableImage writableImage;
+        RenderedImage renderedImage;
+        ByteArrayOutputStream byteOutput;
+        Font font = new Font(baseFont, 7, Font.NORMAL);
+        PdfPTable pdfPTable = new PdfPTable(2);
+        pdfPTable.setTotalWidth(PageSize.A4.getWidth());
+        pdfPTable.setLockedWidth(true);
+        for (int i = 0;i < resultsList.size();i++){
+            if (resultsList.get(i).part2 == null){
+                continue;
+            }
+            myCanvas = new Canvas(1100, 600);
+            gc = myCanvas.getGraphicsContext2D();
+            drawCut(gc,resultsList.get(i),4);
+            writableImage = new WritableImage(900, 600);
+            myCanvas.snapshot(null,writableImage);
+            renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+            byteOutput = new ByteArrayOutputStream();
+
+            try {
+                ImageIO.write( renderedImage, "png", byteOutput );
+                Image image = Image.getInstance(byteOutput.toByteArray());
+                image.setAlignment(Element.ALIGN_LEFT);
+                image.scalePercent(30);
+                PdfPCell  pdfPCell = new PdfPCell();
+                pdfPCell.setBorder(Rectangle.NO_BORDER);
+                pdfPCell.addElement(new Paragraph(resultsList.get(i).toString(),font));
+                pdfPCell.addElement(image);
+                pdfPTable.addCell(pdfPCell);
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        PdfPCell  pdfPCell = new PdfPCell();
+        pdfPCell.setBorder(Rectangle.NO_BORDER);
+        pdfPTable.addCell(pdfPCell);
+        document.add(pdfPTable);
     }
 }
