@@ -135,10 +135,113 @@ public class Controller implements Initializable {
                 CalcPressKnife();
             }
         };
-        fW.textProperty().addListener(calcKnivesListener);
-        fL.textProperty().addListener(calcKnivesListener);
-        fH.textProperty().addListener(calcKnivesListener);
-        fHc.textProperty().addListener(calcKnivesListener);
+        fW.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals("")) {
+                    try {
+                        Double.valueOf(newValue);
+                        if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
+                            fW.setText(newValue.substring(0, newValue.length()-1));
+                        }
+                    }catch (Exception e){
+                        fW.setText(oldValue);
+                    }
+                }
+                CalcPressKnife();
+            }
+        });
+        fL.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals("")) {
+                    try {
+                        Double.valueOf(newValue);
+                        if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
+                            fL.setText(newValue.substring(0, newValue.length()-1));
+                        }
+                    }catch (Exception e){
+                        fL.setText(oldValue);
+                    }
+                }
+                CalcPressKnife();
+            }
+        });
+        fH.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals("")) {
+                    try {
+                        Double.valueOf(newValue);
+                        if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
+                            fH.setText(newValue.substring(0, newValue.length()-1));
+                        }
+                    }catch (Exception e){
+                        fH.setText(oldValue);
+                    }
+                }
+                CalcPressKnife();
+            }
+        });
+        fHc.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals("")) {
+                    try {
+                        Double.valueOf(newValue);
+                        if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
+                            fHc.setText(newValue.substring(0, newValue.length()-1));
+                        }
+                    }catch (Exception e){
+                        fHc.setText(oldValue);
+                    }
+                }
+                CalcPressKnife();
+            }
+        });
+        fQuantity.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals("")) {
+                    try {
+                        Integer.valueOf(newValue);
+                    }catch (Exception e){
+                        fQuantity.setText(oldValue);
+                    }
+                }
+            }
+        });
+        sC1.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals("")) {
+                    try {
+                        Double.valueOf(newValue);
+                        if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
+                            sC1.setText(newValue.substring(0, newValue.length()-1));
+                        }
+                    }catch (Exception e){
+                        sC1.setText(oldValue);
+                    }
+                }
+            }
+        });
+        sC2.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.equals("")) {
+                    try {
+                        Double.valueOf(newValue);
+                        if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
+                            sC2.setText(newValue.substring(0, newValue.length()-1));
+                        }
+                    }catch (Exception e){
+                        sC2.setText(oldValue);
+                    }
+                }
+            }
+        });
+
     }
 
     public static void write(String fileName, String text) {
@@ -244,21 +347,21 @@ public class Controller implements Initializable {
 
 
 
-        prise.setText("Цена - " + String.valueOf((int) order.prise));
-        cost.setText("Стоимость - " + String.valueOf((int) order.cost));
-        prisePer1.setText("Цена за шт. " + String.valueOf((int)order.prise/order.quantity));
-        costPer1.setText("Стоимость за шт. " + String.valueOf((int)order.cost/order.quantity));
-        cartonCost.setText("Картон " + order.cartonCost);
-        paperCost.setText("Бумага " + order.paperCost);
-        tapeCost.setText("Скотч " + order.tapeCost);
-        glueCost.setText("Клей " + order.glueCost);
-        workCost.setText("Работа " + order.workCost);
-        cuttingCost.setText("Порезка " + order.cuttingCost);
-        pressinCost.setText("Высечка " + order.pressinCost);
-        rentCost.setText("Оренда " + order.rentCost);
-        stretchCost.setText("Стрейч"  + order.stretchCost);
-        extraCost.setText("Доп. " + order.extraCost);
-        laminationCost.setText("Ламинация" + order.laminationCost);
+        prise.setText("Цена - " + String.valueOf((int) order.prise) + ".00");
+        cost.setText("Стоимость - " + String.valueOf((int) order.cost) + ".00");
+        prisePer1.setText("Цена за шт. " + String.valueOf((int)order.prise/order.quantity) + ".00");
+        costPer1.setText("Стоимость за шт. " + String.valueOf((int)order.cost/order.quantity) + ".00");
+        cartonCost.setText("Картон " + order.cartonCost + "0");
+        paperCost.setText("Бумага " + order.paperCost + "0");
+        tapeCost.setText("Скотч " + order.tapeCost + "0");
+        glueCost.setText("Клей " + order.glueCost + "0");
+        workCost.setText("Работа " + order.workCost + "0");
+        cuttingCost.setText("Порезка " + order.cuttingCost + "0");
+        pressinCost.setText("Высечка " + order.pressinCost + "0");
+        rentCost.setText("Оренда " + order.rentCost + "0");
+        stretchCost.setText("Стрейч"  + order.stretchCost + "0");
+        extraCost.setText("Доп. " + order.extraCost + "0");
+        laminationCost.setText("Ламинация" + order.laminationCost + "0");
         ObservableList<PossibleResults> observableListCarton = FXCollections.observableArrayList(order.listTopResult);
         cartonListView.setItems(observableListCarton);
         cartonListView.setOnMouseClicked(new EventHandler<MouseEvent>() {

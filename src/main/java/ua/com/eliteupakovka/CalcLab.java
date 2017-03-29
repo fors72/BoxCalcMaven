@@ -104,16 +104,13 @@ public class CalcLab {
             resSet = connect("SELECT * FROM construction");
             while(resSet.next())
             {
-                constructionList.add(new DynamicConstruction(resSet.getString("name"),resSet.getInt("id"),null));
+                constructionList.add(new DynamicConstruction(resSet.getString("name"),resSet.getInt("id"),null,new Costs(resSet.getDouble("rent"),resSet.getDouble("glue"),resSet.getDouble("tape"),resSet.getDouble("stretch"),resSet.getDouble("minCutting"),resSet.getDouble("cutCarton"),resSet.getDouble("cutPaper"),resSet.getDouble("fitting"),resSet.getDouble("cutting"))));
 
             }
             close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-//        constructionList.add(new DynamicConstruction("кришка+дно",1));
-//        constructionList.add(new DynamicConstruction("книга на магните",2));
-//        constructionList.add(new DynamicConstruction("книга на ленте",3));
         return constructionList;
     }
     public List<ConstructionPart> getConstructionPartListByConstructionId(int id,Sizes sizeBox,Parameters parameters,int quantity){
@@ -559,6 +556,25 @@ public class CalcLab {
             statmt.execute("DELETE FROM sizes WHERE id =" + id);
             statmt = connection.createStatement();
             statmt.execute("DELETE FROM constructionSize WHERE idSize =" + id);
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateConstructionCosts(Costs costs,int id) {
+        try {
+            statmt = connection.createStatement();
+            statmt.execute("UPDATE construction SET rent=" + costs.getRent() +
+                    ", glue= " + costs.getGlue() +
+                    ", tape=" + costs.getTape() +
+                    ", stretch=" + costs.getStretch() +
+                    ", minCutting=" + costs.getMinCutting() +
+                    ", cutCarton=" + costs.getCutCarton() +
+                    ", cutPaper=" + costs.getCutPaper() +
+                    ", fitting=" + costs.getFitting() +
+                    ", cutting=" + costs.getCutting() +
+                    " WHERE id = " + id);
             close();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -43,6 +43,9 @@ public class EMController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String[] listOfMaterialType = {"картон", "бумага", "другое"};
+        TextValidation.validateDouble(tfCost);
+        TextValidation.validateDouble(tfWidth);
+        TextValidation.validateDouble(tfLength);
         final ObservableList<String> materialType = FXCollections.observableArrayList(listOfMaterialType);
         cbMaterialType.setItems(materialType);
         numberChangeListener = new ChangeListener<Number>() {

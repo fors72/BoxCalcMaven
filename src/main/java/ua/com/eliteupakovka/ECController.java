@@ -37,7 +37,7 @@ public class ECController implements Initializable {
     @FXML
     CheckBox chbPressing, chbLaminable;
     @FXML
-    TextField tfPartName,tfConstruction,tfWM,tfLM,tfHBM,tfHTM,tfWHBM,tfHLBM,tfHWTM,tfHLTM,tfWA,tfLA,tfHBA,tfHTA,tfTolerance,tfWS,tfWD,tfEWS,tfEWD;
+    TextField tfPartName,tfConstruction,tfWM,tfLM,tfHBM,tfHTM,tfWHBM,tfHLBM,tfHWTM,tfHLTM,tfWA,tfLA,tfHBA,tfHTA,tfTolerance,tfWS,tfWD,tfEWS,tfEWD,rent,glue,tape,stretch,minCutting,cutCarton,cutPaper,fitting,cutting;
 
     @FXML
     ListView<ConstructionPart> lvConstructionPart;
@@ -49,6 +49,32 @@ public class ECController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String[] listOfMaterialType = {"картон", "бумага", "кашировка", "другое"};
+        TextValidation.validateDouble(rent);
+        TextValidation.validateDouble(glue);
+        TextValidation.validateDouble(tape);
+        TextValidation.validateDouble(stretch);
+        TextValidation.validateDouble(cutCarton);
+        TextValidation.validateDouble(cutPaper);
+        TextValidation.validateDouble(minCutting);
+        TextValidation.validateDouble(fitting);
+        TextValidation.validateDouble(cutting);
+        TextValidation.validateDouble(tfWD);
+//        TextValidation.validateDouble(tfEWS);
+//        TextValidation.validateDouble(tfEWD);
+        TextValidation.validateDouble(tfWM);
+        TextValidation.validateDouble(tfLM);
+        TextValidation.validateDouble(tfHBM);
+        TextValidation.validateDouble(tfHTM);
+        TextValidation.validateDouble(tfWHBM);
+        TextValidation.validateDouble(tfHLBM);
+        TextValidation.validateDouble(tfHWTM);
+        TextValidation.validateDouble(tfHLTM);
+        TextValidation.validateDouble(tfWA);
+        TextValidation.validateDouble(tfLA);
+        TextValidation.validateDouble(tfHBA);
+        TextValidation.validateDouble(tfHTA);
+        TextValidation.validateDouble(tfTolerance);
+        TextValidation.validateDouble(tfWS);
 
 
         ObservableList<DynamicConstruction> constructionOS = FXCollections.observableArrayList(calcLab.getConstructionList());
@@ -77,6 +103,17 @@ public class ECController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 updateUIConstructionPart(cbConstruction.getItems().get((int)newValue).getId());
+                Costs costs = cbConstruction.getItems().get((int)newValue).costs;
+                rent.setText(costs.getRent() + "");
+                glue.setText(costs.getGlue() + "");
+                tape.setText(costs.getTape() + "");
+                stretch.setText(costs.getStretch() + "");
+                minCutting.setText(costs.getMinCutting() + "");
+                cutCarton.setText(costs.getCutCarton() + "");
+                cutPaper.setText(costs.getCutPaper() + "");
+                fitting.setText(costs.getFitting() + "");
+                cutting.setText(costs.getCutting() + "");
+
             }
         };
         cbConstruction.getSelectionModel().selectedIndexProperty().addListener(numberChangeListener);
@@ -129,12 +166,16 @@ public class ECController implements Initializable {
         ObservableList<Sizes> sizes = FXCollections.observableArrayList(calcLab.getSizeListByConstructionId(cbConstruction.getValue().getId()));
         cbEnableSize.setItems(sizes);
     }
-    private void updateUIConstructionList(){
+    private void updateUIConstructionList(DynamicConstruction dynamicConstruction){
         cbConstruction.getSelectionModel().selectedIndexProperty().removeListener(numberChangeListener);
         ObservableList<DynamicConstruction> constructionOS = FXCollections.observableArrayList(calcLab.getConstructionList());
         cbConstruction.setItems(constructionOS);
         cbConstruction.getSelectionModel().selectedIndexProperty().addListener(numberChangeListener);
-        cbConstruction.setValue(constructionOS.get(constructionOS.size()-1));
+        if (dynamicConstruction == null) {
+            cbConstruction.setValue(constructionOS.get(constructionOS.size()-1));
+        }else {
+            cbConstruction.setValue(dynamicConstruction);
+        }
     }
     private void bindView(){
         if (selectPart.getId() != 0) {
@@ -208,7 +249,7 @@ public class ECController implements Initializable {
     }
     public void createConstruction(){
         calcLab.insertConstruction(tfConstruction.getText());
-        updateUIConstructionList();
+        updateUIConstructionList(null);
     }
     public void deleteConstruction(){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -224,8 +265,14 @@ public class ECController implements Initializable {
             Optional<ButtonType> result2 = alert.showAndWait();
             if (result2.get() == ButtonType.OK){
                 calcLab.deleteConstructionById(cbConstruction.getValue().getId());
-                updateUIConstructionList();
+                updateUIConstructionList(null);
             }
         }
+    }
+
+    public void updateCosts(){
+        Costs costs = new Costs(Double.valueOf(rent.getText()),Double.valueOf(glue.getText()),Double.valueOf(tape.getText()),Double.valueOf(stretch.getText()),Double.valueOf(minCutting.getText()),Double.valueOf(cutCarton.getText()),Double.valueOf(cutPaper.getText()),Double.valueOf(fitting.getText()),Double.valueOf(cutting.getText()));
+        calcLab.updateConstructionCosts(costs,cbConstruction.getValue().getId());
+        updateUIConstructionList(cbConstruction.getValue());
     }
 }

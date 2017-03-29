@@ -151,7 +151,50 @@
          <center>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
-                  <ListView fx:id="lvConstructionPart" prefHeight="446.0" prefWidth="510.0" />
+                  <ListView fx:id="lvConstructionPart" prefHeight="368.0" prefWidth="448.0" />
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label prefHeight="21.0" prefWidth="75.0" text="Оренда" GridPane.rowIndex="1" />
+                        <Label prefHeight="21.0" prefWidth="61.0" text="Клей" GridPane.rowIndex="2" />
+                        <Label prefHeight="21.0" prefWidth="60.0" text="Скотч" GridPane.rowIndex="3" />
+                        <Label prefHeight="21.0" prefWidth="67.0" text="Стрейч" GridPane.rowIndex="4" />
+                        <Label text="грн за 1 удар" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                        <Label text="мин. порезка" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label text="грн/лист картон" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label text="грн/лист бумага" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label text="прилад. на деталь" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Label text="грн. за 1шт" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label text="грн" GridPane.columnIndex="3" />
+                        <TextField fx:id="rent" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="glue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="tape" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="stretch" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <TextField fx:id="minCutting" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <TextField fx:id="cutCarton" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <TextField fx:id="cutPaper" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <TextField fx:id="fitting" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <TextField fx:id="cutting" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                     </children>
+                  </GridPane>
+                  <Button mnemonicParsing="false" onAction="#updateCosts" text="Изменить доп. цены" />
                </children>
             </VBox>
          </center>

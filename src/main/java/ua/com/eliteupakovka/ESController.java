@@ -35,7 +35,10 @@ public class ESController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        TextValidation.validateDouble(tfWidth);
+        TextValidation.validateDouble(tfLength);
+        TextValidation.validateDouble(tfHeightBottom);
+        TextValidation.validateDouble(tfHeightTop);
         ObservableList<Sizes> sizes = FXCollections.observableArrayList(calcLab.getSizesList());
         sizes.add(new Sizes(0,0,0,0,0));
         lvSize.setItems(sizes);

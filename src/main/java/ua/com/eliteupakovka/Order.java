@@ -41,12 +41,12 @@ class Order {
         }
 
 
-        tapeCost = calc.costs.getTape() * quantity;
-        glueCost = calc.costs.getGlue() * quantity;
-        rentCost = calc.costs.getRent() * quantity;
-        stretchCost = calc.costs.getStretch() * quantity;
-        if ((quantCarton* calc.costs.getCutCarton() + quantPaper * calc.costs.getCutPaper()) <= calc.costs.getMinCutting()) cuttingCost = calc.costs.getMinCutting();
-        if ((quantCarton* calc.costs.getCutCarton() + quantPaper * calc.costs.getCutPaper()) > calc.costs.getMinCutting()) cuttingCost = (quantCarton * calc.costs.getCutCarton() + quantPaper * calc.costs.getCutPaper());
+        tapeCost = construction.costs.getTape() * quantity;
+        glueCost = construction.costs.getGlue() * quantity;
+        rentCost = construction.costs.getRent() * quantity;
+        stretchCost = construction.costs.getStretch() * quantity;
+        if ((quantCarton* construction.costs.getCutCarton() + quantPaper * construction.costs.getCutPaper()) <= construction.costs.getMinCutting()) cuttingCost = construction.costs.getMinCutting();
+        if ((quantCarton* construction.costs.getCutCarton() + quantPaper * construction.costs.getCutPaper()) > construction.costs.getMinCutting()) cuttingCost = (quantCarton * construction.costs.getCutCarton() + quantPaper * construction.costs.getCutPaper());
 
         workCost = 0;
 
@@ -60,7 +60,7 @@ class Order {
             }
             workCost += (cp.getWorkCost().getWorkCost(calcLab.ifMaterialIsDesign(cp.getMaterialTypeId()))) * quantity;
 
-            pressinCost += cp.isPressing() ? 50 + cp.getQuantity()* 0.06 : 0;
+            pressinCost += cp.isPressing() ? construction.costs.getFitting() + cp.getQuantity()* construction.costs.getCutting() : 0;
         }
 
         if (calc.lamination.equals("матовая")){

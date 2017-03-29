@@ -11,6 +11,7 @@ import java.util.*;
 public class DynamicConstruction {
     public List<ConstructionPart> parts;
     WorkCost workCost;
+    public Costs costs;
     Sizes sizes;
     String name;
     int id;
@@ -26,8 +27,9 @@ public class DynamicConstruction {
     private Comparator<ConstructionPart> partComparatorByTypeId = (o1, o2) -> o2.getMaterialTypeId() - o1.getMaterialTypeId();
 
 
-    public DynamicConstruction(List<ConstructionPart> parts, WorkCost workCost, String name, int id, Sizes sizes, int cartonId, int paperId, int kashirovkaId, int quantity) {
+    public DynamicConstruction(List<ConstructionPart> parts, WorkCost workCost, String name, int id, Sizes sizes, int cartonId, int paperId, int kashirovkaId, int quantity, Costs costs) {
         this.workCost = workCost;
+        this.costs = costs;
         this.sizes = sizes;
         this.name = name;
         this.id = id;
@@ -74,10 +76,11 @@ public class DynamicConstruction {
 
     }
 
-    public DynamicConstruction(String name, int id,WorkCost workCost) {
+    public DynamicConstruction(String name, int id,WorkCost workCost,Costs costs) {
         this.name = name;
         this.id = id;
         this.workCost = workCost;
+        this.costs = costs;
     }
 
     private <T extends Material> void initListTopResult(List<ConstructionPart> constructionParts){
