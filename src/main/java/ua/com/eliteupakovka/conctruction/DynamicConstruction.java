@@ -2,9 +2,7 @@ package ua.com.eliteupakovka.conctruction;
 
 
 import ua.com.eliteupakovka.*;
-import ua.com.eliteupakovka.material.Carton;
 import ua.com.eliteupakovka.material.Material;
-import ua.com.eliteupakovka.material.Paper;
 
 import java.util.*;
 
@@ -157,8 +155,8 @@ public class DynamicConstruction {
                     } else {
                         resultsList.add(new PossibleResults<>(mt,part1,part2, name));
                     }
-                } catch (AnotherTypeExeption anotherTypeExeption) {
-                    anotherTypeExeption.printStackTrace();
+                } catch (AnotherTypeException anotherTypeException) {
+                    anotherTypeException.printStackTrace();
                 }
             }
         }

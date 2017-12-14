@@ -26,9 +26,9 @@ public class AddController implements Initializable {
             e.printStackTrace();
         }
         primaryStage.setTitle("Конструкции");
-        primaryStage.setMinWidth(800);
+        primaryStage.setMinWidth(1200);
         primaryStage.setMinHeight(900);
-        primaryStage.setScene(new Scene(root, 800, 900));
+        primaryStage.setScene(new Scene(root, 1200, 900));
         primaryStage.show();
     }
 

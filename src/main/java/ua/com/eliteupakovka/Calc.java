@@ -28,6 +28,10 @@ public class Calc {
 
 //        costs = new Costs(1, 1.8, 0.16, 1, 50, 0.25, 0.1, 50, 0.06);
         CalcLab calcLab = CalcLab.get();
+        DynamicConstruction dynamicConstruction = calcLab.getConstruction(construction.getId());
+        if (dynamicConstruction != null) {
+            construction = dynamicConstruction;
+        }
         this.construction = new DynamicConstruction(calcLab.getConstructionPartListByConstructionId(construction.getId(),sizeBox,parameters,quantity),construction.getWorkCost(),construction.getName(),construction.getId(),sizeBox,cartonId,paperId,kashirovkaId,quantity,construction.costs);
 
     }

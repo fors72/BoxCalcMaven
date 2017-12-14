@@ -113,6 +113,21 @@ public class CalcLab {
         }
         return constructionList;
     }
+    public DynamicConstruction getConstruction(int id) {
+        DynamicConstruction constructionList = null;
+        try {
+            resSet = connect("SELECT * FROM construction WHERE id = " + id);
+            while(resSet.next())
+            {
+                constructionList = new DynamicConstruction(resSet.getString("name"),resSet.getInt("id"),null,new Costs(resSet.getDouble("rent"),resSet.getDouble("glue"),resSet.getDouble("tape"),resSet.getDouble("stretch"),resSet.getDouble("minCutting"),resSet.getDouble("cutCarton"),resSet.getDouble("cutPaper"),resSet.getDouble("fitting"),resSet.getDouble("cutting")));
+
+            }
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return constructionList;
+    }
     public List<ConstructionPart> getConstructionPartListByConstructionId(int id,Sizes sizeBox,Parameters parameters,int quantity){
         List<ConstructionPart> constructionParts = new ArrayList<>();
         try {

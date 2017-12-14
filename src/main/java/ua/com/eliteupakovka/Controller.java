@@ -58,10 +58,43 @@ public class Controller implements Initializable {
     @FXML
     ListView<PossibleResults> cartonListView;
     @FXML
-    ListView<String> testDb;
-    @FXML
     Label cost,prise,cartonCost,paperCost,tapeCost,glueCost,workCost,cuttingCost,pressinCost,rentCost,stretchCost,extraCost,laminationCost,prisePer1,costPer1,k1,k2,k3,k4,k5;
 
+    boolean blockSizeChange;
+    ChangeListener<Sizes> sizesChangeListener = new ChangeListener<Sizes>() {
+        @Override
+        public void changed(ObservableValue<? extends Sizes> observable, Sizes oldValue, Sizes newValue) {
+            if (!blockSizeChange) {
+                if (newValue != null) {
+                    if (newValue.toString().equals("Другой")){
+                        fW.setText("");
+                        fL.setText("");
+                        fH.setText("");
+                        fHc.setText("");
+                        fW.setDisable(false);
+                        fL.setDisable(false);
+                        fH.setDisable(false);
+                        if (cbConstruction.getValue().getName().equals("Книга на магните") || cbConstruction.getValue().getName().equals("Книга на ленте")){
+                            fHc.setText("0");
+                            fHc.setDisable(true);
+                        }else {
+                            fHc.setDisable(false);
+                        }
+                    }else {
+                        fW.setText(newValue.getWidth() + "");
+                        fL.setText(newValue.getLength() + "");
+                        fH.setText(newValue.getHeightBottom() + "");
+                        fHc.setText(newValue.getHeightTop() + "");
+                        fW.setDisable(true);
+                        fL.setDisable(true);
+                        fH.setDisable(true);
+                        fHc.setDisable(true);
+                    }
+                }
+
+            }
+        }
+    };
 
 
     @Override
@@ -86,40 +119,28 @@ public class Controller implements Initializable {
                 ObservableList<Sizes> boxOS = FXCollections.observableArrayList();
                 boxOS.add(new Sizes(0,0,0,0,0));
                 boxOS.addAll(calcLab.getSizeListByConstructionId(cbConstruction.getItems().get((int)newValue).getId()));
+                blockSizeChange = true;
                 cbBox.setItems(boxOS);
                 if (boxOS.get(0) != null) {
                     cbBox.setValue(boxOS.get(0));
                 }
+                blockSizeChange = false;
+                if (cbConstruction.getItems().get((int)newValue).getName().equals("Книга на магните") || cbConstruction.getItems().get((int)newValue).getName().equals("Книга на ленте")){
+                    fHc.setText("0");
+                    fHc.setDisable(true);
+                }else {
+                    fHc.setDisable(false);
+                }
+                fW.setDisable(false);
+                fL.setDisable(false);
+                fH.setDisable(false);
+
+
             }
         });
         cbConstruction.setValue(constructionOS.get(0));
 
-        cbBox.valueProperty().addListener(new ChangeListener<Sizes>() {
-            @Override
-            public void changed(ObservableValue<? extends Sizes> observable, Sizes oldValue, Sizes newValue) {
-                if (newValue != null) {
-                    if (newValue.toString().equals("Другой")){
-                        fW.setText("");
-                        fL.setText("");
-                        fH.setText("");
-                        fHc.setText("");
-                        fW.setDisable(false);
-                        fL.setDisable(false);
-                        fH.setDisable(false);
-                        fHc.setDisable(false);
-                    }else {
-                        fW.setText(newValue.getWidth() + "");
-                        fL.setText(newValue.getLength() + "");
-                        fH.setText(newValue.getHeightBottom() + "");
-                        fHc.setText(newValue.getHeightTop() + "");
-                        fW.setDisable(true);
-                        fL.setDisable(true);
-                        fH.setDisable(true);
-                        fHc.setDisable(true);
-                    }
-                }
-            }
-        });
+        cbBox.valueProperty().addListener(sizesChangeListener);
         cbCarton.setItems(cartonOS);
         cbCarton.setValue(cartonOS.get(0));
         cbPaper.setItems(paperOS);
@@ -140,7 +161,7 @@ public class Controller implements Initializable {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (!newValue.equals("")) {
                     try {
-                        Double.valueOf(newValue);
+                        Double.valueOf(newValue.replace(",","."));
                         if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
                             fW.setText(newValue.substring(0, newValue.length()-1));
                         }
@@ -156,7 +177,7 @@ public class Controller implements Initializable {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (!newValue.equals("")) {
                     try {
-                        Double.valueOf(newValue);
+                        Double.valueOf(newValue.replace(",","."));
                         if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
                             fL.setText(newValue.substring(0, newValue.length()-1));
                         }
@@ -172,7 +193,7 @@ public class Controller implements Initializable {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (!newValue.equals("")) {
                     try {
-                        Double.valueOf(newValue);
+                        Double.valueOf(newValue.replace(",","."));
                         if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
                             fH.setText(newValue.substring(0, newValue.length()-1));
                         }
@@ -188,7 +209,7 @@ public class Controller implements Initializable {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (!newValue.equals("")) {
                     try {
-                        Double.valueOf(newValue);
+                        Double.valueOf(newValue.replace(",","."));
                         if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
                             fHc.setText(newValue.substring(0, newValue.length()-1));
                         }
@@ -216,7 +237,7 @@ public class Controller implements Initializable {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (!newValue.equals("")) {
                     try {
-                        Double.valueOf(newValue);
+                        Double.valueOf(newValue.replace(",","."));
                         if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
                             sC1.setText(newValue.substring(0, newValue.length()-1));
                         }
@@ -231,7 +252,7 @@ public class Controller implements Initializable {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (!newValue.equals("")) {
                     try {
-                        Double.valueOf(newValue);
+                        Double.valueOf(newValue.replace(",","."));
                         if (newValue.endsWith("f") || newValue.endsWith("d") || newValue.endsWith(" ")) {
                             sC2.setText(newValue.substring(0, newValue.length()-1));
                         }
@@ -275,10 +296,10 @@ public class Controller implements Initializable {
         double dobPB;
         double dobPC;
         try {
-            dobCB = Double.valueOf(fW.getText());
-            dobCC = Double.valueOf(fL.getText());
-            dobPB = Double.valueOf(fH.getText());
-            dobPC = Double.valueOf(fHc.getText());
+            dobCB = Double.valueOf(fW.getText().replace(",","."));
+            dobCC = Double.valueOf(fL.getText().replace(",","."));
+            dobPB = Double.valueOf(fH.getText().replace(",","."));
+            dobPC = Double.valueOf(fHc.getText().replace(",","."));
         } catch (Exception e) {
             k1.setText("");
             k2.setText("");
@@ -293,11 +314,11 @@ public class Controller implements Initializable {
         int mknivesPB = (int)(((2 * dobCB + 2 * dobCC + 8 * (dobPB + 1.5)) / 100) * 15 * 27);
         int mknivesPC = (int)(((2 * (dobCB + 0.5) + 2 * (dobCC + 0.5) + 8 * (dobPC + 1.5)) / 100) * 15 * 27);
 
-        k1.setText("Картон дно - " + mknivesCB + " грн");
-        k2.setText("Картон крышка - " + mknivesCC + " грн");
-        k3.setText("Бумага дно - " + mknivesPB + " грн");
-        k4.setText("Бумага Крышка - " + mknivesPC + " грн");
-        k5.setText("Сумма - " + (mknivesCB + mknivesCC + mknivesPB + mknivesPC) + " грн");
+        k1.setText("Картон дно - " + mknivesCB + ",00 грн");
+        k2.setText("Картон крышка - " + mknivesCC + ",00 грн");
+        k3.setText("Бумага дно - " + mknivesPB + ",00 грн");
+        k4.setText("Бумага Крышка - " + mknivesPC + ",00 грн");
+        k5.setText("Сумма - " + (mknivesCB + mknivesCC + mknivesPB + mknivesPC) + ",00 грн");
 
     }
     public void CalcCliche(){
@@ -305,8 +326,8 @@ public class Controller implements Initializable {
         double dobSC2;
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         try {
-            dobSC1 = Double.valueOf(sC1.getText());
-            dobSC2 = Double.valueOf(sC2.getText());
+            dobSC1 = Double.valueOf(sC1.getText().replace(",","."));
+            dobSC2 = Double.valueOf(sC2.getText().replace(",","."));
         } catch (Exception e) {
             alert.setTitle("!!!!");
             alert.setContentText("неправельный формат числа");
@@ -316,7 +337,7 @@ public class Controller implements Initializable {
         }
         double klisheCost = (int)(dobSC1 + 2) * (dobSC2 + 2) * 5.76;
         alert.setTitle("Клише");
-        alert.setContentText(klisheCost + " грн");
+        alert.setContentText(klisheCost + ",00 грн");
         alert.setHeaderText("");
         alert.showAndWait();
     }
@@ -327,7 +348,7 @@ public class Controller implements Initializable {
             //TODO: check w l hb ht
             Sizes sizes;
             if (cbBox.getValue().getId() == 0) {
-                sizes = new Sizes(0,Double.valueOf(fW.getText()),Double.valueOf(fL.getText()), Double.valueOf(fH.getText()),Double.valueOf(fHc.getText()));
+                sizes = new Sizes(0,Double.valueOf(fW.getText().replace(",",".")),Double.valueOf(fL.getText().replace(",",".")), Double.valueOf(fH.getText().replace(",",".")),Double.valueOf(fHc.getText().replace(",",".")));
             } else {
                 sizes = cbBox.getValue();
             }
@@ -347,21 +368,21 @@ public class Controller implements Initializable {
 
 
 
-        prise.setText("Цена - " + String.valueOf((int) order.prise) + ".00");
-        cost.setText("Стоимость - " + String.valueOf((int) order.cost) + ".00");
-        prisePer1.setText("Цена за шт. " + String.valueOf((int)order.prise/order.quantity) + ".00");
-        costPer1.setText("Стоимость за шт. " + String.valueOf((int)order.cost/order.quantity) + ".00");
-        cartonCost.setText("Картон " + order.cartonCost + "0");
-        paperCost.setText("Бумага " + order.paperCost + "0");
-        tapeCost.setText("Скотч " + order.tapeCost + "0");
-        glueCost.setText("Клей " + order.glueCost + "0");
-        workCost.setText("Работа " + order.workCost + "0");
-        cuttingCost.setText("Порезка " + order.cuttingCost + "0");
-        pressinCost.setText("Высечка " + order.pressinCost + "0");
-        rentCost.setText("Оренда " + order.rentCost + "0");
-        stretchCost.setText("Стрейч"  + order.stretchCost + "0");
-        extraCost.setText("Доп. " + order.extraCost + "0");
-        laminationCost.setText("Ламинация" + order.laminationCost + "0");
+        prise.setText("Цена - " + String.valueOf((int) order.prise) + ",00 грн");
+        cost.setText("Стоимость - " + String.valueOf((int) order.cost) + ",00 грн");
+        prisePer1.setText("Цена за шт. " + String.valueOf((int)order.prise/order.quantity) + ",00 грн");
+        costPer1.setText("Стоимость за шт. " + String.valueOf((int)order.cost/order.quantity) + ",00 грн");
+        cartonCost.setText("Картон " + (int)order.cartonCost + ",00 грн");
+        paperCost.setText("Бумага " + (int)order.paperCost + ",00 грн");
+        tapeCost.setText("Скотч " + (int)order.tapeCost + ",00 грн");
+        glueCost.setText("Клей " + (int)order.glueCost + ",00 грн");
+        workCost.setText("Работа " + (int)order.workCost + ",00 грн");
+        cuttingCost.setText("Порезка " + (int)order.cuttingCost + ",00 грн");
+        pressinCost.setText("Высечка " + (int)order.pressinCost + ",00 грн");
+        rentCost.setText("Оренда " + (int)order.rentCost + ",00 грн");
+        stretchCost.setText("Стрейч"  + (int)order.stretchCost + ",00 грн");
+        extraCost.setText("Доп. " + (int)order.extraCost + ",00 грн");
+        laminationCost.setText("Ламинация" + (int)order.laminationCost + ",00 грн");
         ObservableList<PossibleResults> observableListCarton = FXCollections.observableArrayList(order.listTopResult);
         cartonListView.setItems(observableListCarton);
         cartonListView.setOnMouseClicked(new EventHandler<MouseEvent>() {

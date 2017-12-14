@@ -42,9 +42,9 @@ public class PossibleResults<T extends Material> {
 
         initResult(material, widthBottom, lengthBottom, widthTop, lengthTop, quantity);
     }
-    public PossibleResults(T material, ConstructionPart part1, ConstructionPart part2, String name) throws AnotherTypeExeption {
+    public PossibleResults(T material, ConstructionPart part1, ConstructionPart part2, String name) throws AnotherTypeException {
         if (part1.getMaterialTypeId() != part2.getMaterialTypeId()){
-            throw new AnotherTypeExeption("material part 1 != material part 2");
+            throw new AnotherTypeException("material part 1 != material part 2");
         }
         this.material = material;
         this.part1 = part1;
